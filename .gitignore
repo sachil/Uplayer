@@ -15,7 +15,6 @@ gen/
 # Gradle files
 .gradle/
 build/
-/*/build/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -25,3 +24,16 @@ proguard/
 
 # Log Files
 *.log
+
+# Android Studio (InteliJ)
+.idea/
+/.idea/workspace.xml
+*.iml
+*.iws
+*.ipr
+/*/out
+/*/build
+/*/*/production
+
+#OSx
+.DS_Store
