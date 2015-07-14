@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Uplayer</string>
+    <string name="title_music">音乐</string>
+    <string name="title_video">视频</string>
+    <string name="title_photo">图片</string>
+    <string name="action_settings">设置</string>
+</resources>
