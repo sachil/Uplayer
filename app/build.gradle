@@ -11,6 +11,12 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    packagingOptions {
+        exclude 'META-INF/eclipse.inf'
+        exclude 'META-INF/beans.xml'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
