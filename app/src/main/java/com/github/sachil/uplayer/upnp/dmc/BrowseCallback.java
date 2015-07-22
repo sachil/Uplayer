@@ -1,6 +1,6 @@
 package com.github.sachil.uplayer.upnp.dmc;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
@@ -21,14 +21,14 @@ public class BrowseCallback extends Browse {
 	private static final String LOG_TAG = BrowseCallback.class.getSimpleName();
 
 	private Handler mHandler = null;
-	private ArrayList<ContentItem> mContentList = null;
+	private List<ContentItem> mContentList = null;
 	@SuppressWarnings("rawtypes")
 	private Service mService = null;
 	private boolean mIsLocal = false;
 
 	@SuppressWarnings("rawtypes")
 	public BrowseCallback(Handler handler, Service service,
-			Container container, ArrayList<ContentItem> contentList,
+			Container container, List<ContentItem> contentList,
 			boolean isLocal) {
 		super(service, container.getId(), BrowseFlag.DIRECT_CHILDREN, "*", 0,
 				null, new SortCriterion(true, "dc:title"));

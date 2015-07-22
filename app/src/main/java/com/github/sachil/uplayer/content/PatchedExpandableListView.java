@@ -9,24 +9,25 @@ import android.widget.ExpandableListView;
  */
 public class PatchedExpandableListView extends ExpandableListView {
 
-    public PatchedExpandableListView(Context context){
-        super(context);
-    }
+	public PatchedExpandableListView(Context context) {
+		super(context);
+	}
 
-    public PatchedExpandableListView(Context context, AttributeSet attrs) {
-        super(context,attrs);
-    }
+	public PatchedExpandableListView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+	}
 
-    public PatchedExpandableListView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context,attrs,defStyleAttr);
-    }
+	public PatchedExpandableListView(Context context, AttributeSet attrs,
+			int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
+	}
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        int expandSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2,
-                MeasureSpec.AT_MOST);
+		int expandSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2,
+				MeasureSpec.AT_MOST);
 
-        super.onMeasure(widthMeasureSpec, expandSpec);
-    }
+		super.onMeasure(widthMeasureSpec, expandSpec);
+	}
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.sachil.uplayer.R;
+import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.meta.RemoteDevice;
@@ -26,164 +27,177 @@ import java.util.List;
  */
 public class NavAdapter extends BaseExpandableListAdapter {
 
-    private static final String TAG = NavAdapter.class.getSimpleName();
-    private Context mContext = null;
-    private List<Object> mGroups = null;
-    private List<List<Object>> mChilds = null;
+	private static final String TAG = NavAdapter.class.getSimpleName();
+	private Context mContext = null;
+	private List<Object> mGroups = null;
+	private List<List<Object>> mChilds = null;
 
-    public NavAdapter(Context context) {
+	public NavAdapter(Context context) {
 
-        mContext = context;
-        mGroups = new ArrayList<>(1);
-        mChilds = new ArrayList<>();
-    }
+		mContext = context;
+		mGroups = new ArrayList<>(1);
+		mChilds = new ArrayList<>();
+	}
 
+	public void refresh(List child) {
+		mGroups.clear();
+		mChilds.clear();
+		mGroups.add(child.get(0));
 
-    public void refresh(List child) {
-        mGroups.clear();
-        mChilds.clear();
-        if (child.get(0) instanceof Device)
-            mGroups.add(child.get(0));
+		for (int i = 0; i < mGroups.size(); i++)
+			mChilds.add(child);
+		notifyDataSetChanged();
+	}
 
-        for (int i = 0; i < mGroups.size(); i++)
-            mChilds.add(child);
-        notifyDataSetChanged();
-    }
+	@Override
+	public Object getChild(int groupPosition, int childPosition) {
+		return mChilds.get(groupPosition).get(childPosition);
+	}
 
+	@Override
+	public long getChildId(int groupPosition, int childPosition) {
+		return childPosition;
+	}
 
-    @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        return mChilds.get(groupPosition).get(childPosition);
-    }
+	@Override
+	public int getChildrenCount(int groupPosition) {
+		return mChilds.get(groupPosition).size();
+	}
 
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
-    }
+	@Override
+	public View getChildView(int groupPosition, int childPosition,
+			boolean isLastChild, View convertView, ViewGroup parent) {
 
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        return mChilds.get(groupPosition).size();
-    }
+		ChildHolder viewHolder;
+		Device device = null;
+		ContentItem content = null;
 
-    @Override
-    public View getChildView(int groupPosition, int childPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
+		if (mChilds.get(groupPosition).get(childPosition) instanceof Device)
+			device = (Device) mChilds.get(groupPosition).get(childPosition);
+		else if (mChilds.get(groupPosition)
+				.get(childPosition) instanceof ContentItem)
+			content = (ContentItem) mChilds.get(groupPosition)
+					.get(childPosition);
 
-        ChildHolder viewHolder;
-        Device device = null;
-        String title = null;
+		if (convertView == null) {
+			viewHolder = new ChildHolder();
+			convertView = LayoutInflater.from(mContext)
+					.inflate(R.layout.nav_child, null);
+			viewHolder.mChildImage = (SimpleDraweeView) convertView
+					.findViewById(R.id.nav_child_image);
+			viewHolder.mChildTitle = (TextView) convertView
+					.findViewById(R.id.nav_child_title);
+			convertView.setTag(viewHolder);
+		} else
+			viewHolder = (ChildHolder) convertView.getTag();
 
-        if (mChilds.get(groupPosition).get(childPosition) instanceof Device)
-            device = (Device) mChilds.get(groupPosition).get(childPosition);
-        else
-            title = (String) mChilds.get(groupPosition).get(childPosition);
+		if (device != null) {
+			if (device instanceof RemoteDevice && device.hasIcons()) {
+				String iconUri = ((RemoteDevice) device)
+						.normalizeURI(device.getIcons()[0].getUri()).toString();
+				viewHolder.mChildImage.setImageURI(Uri.parse(iconUri));
+			} else
+				viewHolder.mChildImage.setImageResource(R.drawable.ic_launcher);
 
-        if (convertView == null) {
-            viewHolder = new ChildHolder();
-            convertView = LayoutInflater.from(mContext)
-                    .inflate(R.layout.nav_child, null);
-            viewHolder.mChildImage = (SimpleDraweeView) convertView
-                    .findViewById(R.id.nav_child_image);
-            viewHolder.mChildTitle = (TextView) convertView
-                    .findViewById(R.id.nav_child_title);
-            convertView.setTag(viewHolder);
-        } else
-            viewHolder = (ChildHolder) convertView.getTag();
+			viewHolder.mChildTitle
+					.setText(device.getDetails().getFriendlyName());
+		} else {
 
+			if (content.isContainer()) {
+				viewHolder.mChildTitle
+						.setText(content.getContainer().getTitle());
+			}
+		}
 
-        if (device != null) {
-            if (device instanceof RemoteDevice && device.hasIcons()) {
-                String iconUri = ((RemoteDevice) device).normalizeURI(device.getIcons()[0].getUri()).toString();
-                viewHolder.mChildImage.setImageURI(Uri.parse(iconUri));
-            } else
-                viewHolder.mChildImage.setImageResource(R.drawable.ic_launcher);
+		return convertView;
+	}
 
-            viewHolder.mChildTitle.setText(device.getDetails().getFriendlyName());
-        } else
-            viewHolder.mChildTitle.setText(title);
-        return convertView;
-    }
+	@Override
+	public Object getGroup(int groupPosition) {
+		return mGroups.get(groupPosition);
+	}
 
-    @Override
-    public Object getGroup(int groupPosition) {
-        return mGroups.get(groupPosition);
-    }
+	@Override
+	public int getGroupCount() {
+		return mGroups.size();
+	}
 
-    @Override
-    public int getGroupCount() {
-        return mGroups.size();
-    }
+	@Override
+	public long getGroupId(int groupPosition) {
+		return groupPosition;
+	}
 
-    @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
+	@Override
+	public View getGroupView(int groupPosition, boolean isExpanded,
+			View convertView, ViewGroup parent) {
 
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
-                             View convertView, ViewGroup parent) {
+		GroupHolder viewHolder;
+		Device device = null;
+		ContentItem content = null;
 
-        GroupHolder viewHolder;
-        Device device = null;
-        String title = null;
+		if (mGroups.get(groupPosition) instanceof Device)
+			device = (Device) mGroups.get(groupPosition);
+		else
+			content = (ContentItem) mGroups.get(groupPosition);
 
-        if (mGroups.get(groupPosition) instanceof Device)
-            device = (Device) mGroups.get(groupPosition);
-        else
-            title = (String) mGroups.get(groupPosition);
+		if (convertView == null) {
+			viewHolder = new GroupHolder();
+			convertView = LayoutInflater.from(mContext)
+					.inflate(R.layout.nav_group, null);
+			viewHolder.mGroupTitle = (TextView) convertView
+					.findViewById(R.id.nav_group_title);
+			viewHolder.mGroupImage = (SimpleDraweeView) convertView
+					.findViewById(R.id.nav_group_image);
+			viewHolder.mGroupArrow = (ImageView) convertView
+					.findViewById(R.id.nav_group_arrow);
+			convertView.setTag(viewHolder);
 
-        if (convertView == null) {
-            viewHolder = new GroupHolder();
-            convertView = LayoutInflater.from(mContext)
-                    .inflate(R.layout.nav_group, null);
-            viewHolder.mGroupTitle = (TextView) convertView
-                    .findViewById(R.id.nav_group_title);
-            viewHolder.mGroupImage = (SimpleDraweeView) convertView
-                    .findViewById(R.id.nav_group_image);
-            viewHolder.mGroupArrow = (ImageView) convertView
-                    .findViewById(R.id.nav_group_arrow);
-            convertView.setTag(viewHolder);
+		} else
+			viewHolder = (GroupHolder) convertView.getTag();
 
-        } else
-            viewHolder = (GroupHolder) convertView.getTag();
+		if (device != null) {
 
-        if (device != null) {
+			if (device instanceof RemoteDevice && device.hasIcons()) {
+				String iconUri = ((RemoteDevice) device)
+						.normalizeURI(device.getIcons()[0].getUri()).toString();
+				viewHolder.mGroupImage.setImageURI(Uri.parse(iconUri));
+			} else
+				viewHolder.mGroupImage.setImageResource(R.drawable.ic_launcher);
+			viewHolder.mGroupTitle
+					.setText(device.getDetails().getFriendlyName());
+		} else {
 
-            if (device instanceof RemoteDevice && device.hasIcons()) {
-                String iconUri = ((RemoteDevice) device).normalizeURI(device.getIcons()[0].getUri()).toString();
-                viewHolder.mGroupImage.setImageURI(Uri.parse(iconUri));
-            } else
-                viewHolder.mGroupImage.setImageResource(R.drawable.ic_launcher);
-            viewHolder.mGroupTitle.setText(device.getDetails().getFriendlyName());
-        } else
-            viewHolder.mGroupTitle.setText(title);
-        return convertView;
-    }
+			if (content.isContainer())
+				viewHolder.mGroupTitle
+						.setText(content.getContainer().getTitle());
+		}
 
-    @Override
-    public boolean hasStableIds() {
-        return false;
-    }
+		return convertView;
+	}
 
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
-    }
+	@Override
+	public boolean hasStableIds() {
+		return false;
+	}
 
-    private static class GroupHolder {
+	@Override
+	public boolean isChildSelectable(int groupPosition, int childPosition) {
+		return true;
+	}
 
-        private SimpleDraweeView mGroupImage = null;
-        private TextView mGroupTitle = null;
-        private ImageView mGroupArrow = null;
+	private static class GroupHolder {
 
-    }
+		private SimpleDraweeView mGroupImage = null;
+		private TextView mGroupTitle = null;
+		private ImageView mGroupArrow = null;
 
-    private static class ChildHolder {
+	}
 
-        private SimpleDraweeView mChildImage = null;
-        private TextView mChildTitle = null;
+	private static class ChildHolder {
 
-    }
+		private SimpleDraweeView mChildImage = null;
+		private TextView mChildTitle = null;
+
+	}
 
 }
