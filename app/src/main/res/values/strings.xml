@@ -3,5 +3,9 @@
     <string name="title_music">music</string>
     <string name="title_video">video</string>
     <string name="title_photo">photo</string>
+    <string name="title_library">LIBRARY</string>
+    <string name="title_renderer">RENDERER</string>
+    <string name="title_media">MEDIA</string>
     <string name="action_settings">Settings</string>
+    <string name="action_exit">Exit</string>
 </resources>
