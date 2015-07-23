@@ -1,7 +1,12 @@
 package com.github.sachil.uplayer.adapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.fourthline.cling.model.meta.Device;
+import org.fourthline.cling.model.meta.RemoteDevice;
+
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +18,6 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.upnp.dmc.ContentItem;
-
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.model.meta.RemoteDevice;
-
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by 20001962 on 2015/7/17.
@@ -39,13 +36,18 @@ public class NavAdapter extends BaseExpandableListAdapter {
 		mChilds = new ArrayList<>();
 	}
 
-	public void refresh(List child) {
-		mGroups.clear();
-		mChilds.clear();
-		mGroups.add(child.get(0));
+	public void refresh(Object group,List child) {
 
-		for (int i = 0; i < mGroups.size(); i++)
-			mChilds.add(child);
+		if(group != null){
+			mGroups.clear();
+			mGroups.add(group);
+		}
+		if(child != null){
+			mChilds.clear();
+			for (int i = 0; i < mGroups.size(); i++)
+				mChilds.add(child);
+		}
+
 		notifyDataSetChanged();
 	}
 
@@ -130,7 +132,6 @@ public class NavAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded,
 			View convertView, ViewGroup parent) {
-
 		GroupHolder viewHolder;
 		Device device = null;
 		ContentItem content = null;
@@ -156,7 +157,6 @@ public class NavAdapter extends BaseExpandableListAdapter {
 			viewHolder = (GroupHolder) convertView.getTag();
 
 		if (device != null) {
-
 			if (device instanceof RemoteDevice && device.hasIcons()) {
 				String iconUri = ((RemoteDevice) device)
 						.normalizeURI(device.getIcons()[0].getUri()).toString();

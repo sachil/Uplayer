@@ -1,110 +1,43 @@
 package com.github.sachil.uplayer;
 
+import org.fourthline.cling.android.AndroidUpnpService;
+import org.fourthline.cling.android.AndroidUpnpServiceImpl;
+import org.fourthline.cling.model.meta.Device;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ExpandableListView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.github.sachil.uplayer.adapter.NavAdapter;
-import com.github.sachil.uplayer.content.PatchedExpandableListView;
-import com.github.sachil.uplayer.upnp.UpnpUnity;
-import com.github.sachil.uplayer.upnp.dmc.BrowseCallback;
-import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 import com.github.sachil.uplayer.upnp.dmc.DeviceRegistryListener;
 import com.github.sachil.uplayer.upnp.dmr.MediaRenderer;
 import com.github.sachil.uplayer.upnp.dms.ContentGenerator;
-import com.github.sachil.uplayer.upnp.dms.ContentTree;
 import com.github.sachil.uplayer.upnp.dms.MediaServer;
 
-import org.fourthline.cling.android.AndroidUpnpService;
-import org.fourthline.cling.android.AndroidUpnpServiceImpl;
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.model.meta.RemoteDevice;
-import org.fourthline.cling.model.meta.Service;
-import org.fourthline.cling.model.types.UDAServiceType;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity
-		implements ExpandableListView.OnChildClickListener {
+		implements ServiceConnection {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
 	private Context mContext = null;
+	private DrawerLayout mDrawerLayout = null;
+	private Toolbar mToolbar = null;
+	private RecyclerView mRecyclerView = null;
+	private NavigationView mNavigationView = null;
+	private NavManager mNavmanager = null;
 	private AndroidUpnpService mUpnpService = null;
-	private NavAdapter mRendererAdapter = null;
-	private NavAdapter mServerAdapter = null;
-	private NavAdapter mMediaAdapter = null;
-	private List<Device> mRenderers = new ArrayList<>();
-	private List<Device> mServers = new ArrayList<>();
-	private List<ContentItem> mMedias = new ArrayList<>();
-
-	private Handler mHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			if (msg.what == UpnpUnity.REFRESH_DMR_LIST) {
-				mRendererAdapter.refresh(mRenderers);
-			} else if (msg.what == UpnpUnity.REFRESH_DMS_LIST) {
-				mServerAdapter.refresh(mServers);
-			} else if (msg.what == UpnpUnity.REFRESH_LIBRARY_LIST) {
-				mMediaAdapter.refresh(mMedias);
-			}
-		}
-	};
-
-	private ServiceConnection mServiceConnection = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName componentName,
-				IBinder iBinder) {
-
-			Log.e(TAG, "Service is connected.");
-			mUpnpService = (AndroidUpnpService) iBinder;
-			MediaServer server = new MediaServer(mContext,
-					UplayerUnity.getInetAddress(mContext));
-			mUpnpService.getRegistry().addDevice(server.getDevice());
-			MediaRenderer renderer = new MediaRenderer(mContext);
-			mUpnpService.getRegistry().addDevice(renderer.getDevice());
-			ContentGenerator.prepareAudio(mContext, server);
-
-			DeviceRegistryListener listener = new DeviceRegistryListener(
-					mHandler, mRenderers, mServers);
-			for (Device device : mUpnpService.getRegistry().getDevices())
-				listener.refreshDevice(device, true);
-			mUpnpService.getRegistry().addListener(listener);
-			mUpnpService.getControlPoint().search();
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName componentName) {
-
-			Log.e(TAG, "Service is disconnected.");
-
-		}
-	};
-
-	@Override
-	public boolean onChildClick(ExpandableListView parent, View view,
-			int groupPosition, int childPosition, long id) {
-
-		Device device = (Device) mServerAdapter.getChild(groupPosition,
-				childPosition);
-		loadMedia(device);
-
-		return false;
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -115,8 +48,60 @@ public class MainActivity extends AppCompatActivity
 		mContext = this;
 		UplayerUnity.setContext(mContext);
 		initView();
-		bindService(new Intent(this, AndroidUpnpServiceImpl.class),
-				mServiceConnection, Context.BIND_AUTO_CREATE);
+		bindService(new Intent(this, AndroidUpnpServiceImpl.class), this,
+				Context.BIND_AUTO_CREATE);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+	}
+
+	@Override
+	protected void onDestroy() {
+		mNavmanager.clean();
+		super.onDestroy();
+	}
+
+	@Override
+	public void onServiceConnected(ComponentName componentName,
+			IBinder iBinder) {
+		Log.e(TAG, "Service is connected.");
+		mUpnpService = (AndroidUpnpService) iBinder;
+		mNavmanager = new NavManager(mContext,
+				findViewById(android.R.id.content), mUpnpService);
+		MediaServer server = new MediaServer(mContext,
+				UplayerUnity.getInetAddress(mContext));
+		mUpnpService.getRegistry().addDevice(server.getDevice());
+		MediaRenderer renderer = new MediaRenderer(mContext);
+		mUpnpService.getRegistry().addDevice(renderer.getDevice());
+		ContentGenerator.prepareAudio(mContext, server);
+
+		DeviceRegistryListener listener = new DeviceRegistryListener();
+		for (Device device : mUpnpService.getRegistry().getDevices())
+			listener.refreshDevice(device, true);
+		mUpnpService.getRegistry().addListener(listener);
+		mUpnpService.getControlPoint().search();
+	}
+
+	@Override
+	public void onServiceDisconnected(ComponentName componentName) {
+		Log.e(TAG, "Service is disconnected.");
 	}
 
 	@Override
@@ -127,61 +112,27 @@ public class MainActivity extends AppCompatActivity
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+
+		switch (item.getItemId()) {
+		case R.id.menu_settings:
+
+			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void initNav() {
-
-		PatchedExpandableListView renderer = (PatchedExpandableListView) findViewById(
-				R.id.nav_renderer);
-
-		PatchedExpandableListView server = (PatchedExpandableListView) findViewById(
-				R.id.nav_library);
-		PatchedExpandableListView media = (PatchedExpandableListView) findViewById(
-				R.id.nav_media);
-
-		mRendererAdapter = new NavAdapter(this);
-		mServerAdapter = new NavAdapter(this);
-		mMediaAdapter = new NavAdapter(this);
-
-		renderer.setAdapter(mRendererAdapter);
-		server.setAdapter(mServerAdapter);
-		server.setOnChildClickListener(this);
-		media.setAdapter(mMediaAdapter);
-	}
-
 	private void initView() {
 
-		NavigationView navigationView = (NavigationView) findViewById(
-				R.id.main_navigation);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-		setSupportActionBar(toolbar);
-		// getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-		initNav();
-	}
-
-	private void loadMedia(Device device) {
-
-		Service service = device.findService(
-				new UDAServiceType(UpnpUnity.SERVICE_CONTENT_DIRECTORY));
-
-		if (service != null) {
-
-			boolean isLocal = device instanceof RemoteDevice ? false : true;
-
-			mUpnpService.getControlPoint()
-					.execute(new BrowseCallback(
-							mHandler, service, ContentTree
-									.getRootContentNode(isLocal).getContainer(),
-							mMedias, isLocal));
-
-		}
-
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer);
+		((CollapsingToolbarLayout) findViewById(R.id.main_toolbar_layout))
+				.setTitle(getString(R.string.app_name));
+		mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
+				mDrawerLayout, mToolbar, R.string.app_name, R.string.app_name);
+		setSupportActionBar(mToolbar);
+		toggle.syncState();
+		mDrawerLayout.setDrawerListener(toggle);
+		mRecyclerView = (RecyclerView) findViewById(R.id.main_recyclerview);
+		mNavigationView = (NavigationView) findViewById(R.id.main_navigation);
 	}
 }

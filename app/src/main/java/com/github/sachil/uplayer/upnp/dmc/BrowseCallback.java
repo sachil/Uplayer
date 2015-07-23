@@ -1,5 +1,6 @@
 package com.github.sachil.uplayer.upnp.dmc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.fourthline.cling.model.action.ActionInvocation;
@@ -12,58 +13,51 @@ import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.item.Item;
 
-import android.os.Handler;
-import android.util.Log;
-
+import com.github.sachil.uplayer.message.BrowseMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 
-public class BrowseCallback extends Browse {
-	private static final String LOG_TAG = BrowseCallback.class.getSimpleName();
+import de.greenrobot.event.EventBus;
 
-	private Handler mHandler = null;
+public class BrowseCallback extends Browse {
+	private static final String TAG = BrowseCallback.class.getSimpleName();
+
 	private List<ContentItem> mContentList = null;
-	@SuppressWarnings("rawtypes")
 	private Service mService = null;
 	private boolean mIsLocal = false;
+	private boolean mIsRootNode = false;
 
-	@SuppressWarnings("rawtypes")
-	public BrowseCallback(Handler handler, Service service,
-			Container container, List<ContentItem> contentList,
+	public BrowseCallback(Service service, Container container,
 			boolean isLocal) {
+
 		super(service, container.getId(), BrowseFlag.DIRECT_CHILDREN, "*", 0,
 				null, new SortCriterion(true, "dc:title"));
-		mHandler = handler;
-		mContentList = contentList;
+
+		mIsRootNode = container.getParentID() == null ? true : false;
+
+		mContentList = new ArrayList<>();
 		mService = service;
 		mIsLocal = isLocal;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void received(ActionInvocation actionInvocation,
 			final DIDLContent didl) {
 		// TODO Auto-generated method stub
 		mContentList.clear();
 		for (Container container : didl.getContainers()) {
-			Log.e(LOG_TAG,
-					"Add child container:" + container.getClazz().getValue()
-							+ "," + container.getTitle() + ","
-							+ container.getId() + "," + container.getParentID());
 			mContentList.add(new ContentItem(container, mService));
 			if (!mIsLocal) {
 				UpnpUnity.generateContainer(container.getId(),
 						container.getTitle(), container.getParentID(),
 						container.getClazz().toString(), false);
 			}
-
 		}
-
-		for (Item item : didl.getItems()) {
-			Log.i(LOG_TAG, "Add child item:" + item.getTitle());
+		for (Item item : didl.getItems())
 			mContentList.add(new ContentItem(item, mService));
-		}
 
-		mHandler.sendEmptyMessage(UpnpUnity.REFRESH_LIBRARY_LIST);
+		EventBus.getDefault()
+				.post(new BrowseMessage(mContentList, mIsRootNode));
+
 	}
 
 	@Override
@@ -72,11 +66,9 @@ public class BrowseCallback extends Browse {
 
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void failure(ActionInvocation arg0, UpnpResponse arg1, String arg2) {
 		// TODO Auto-generated method stub
 
 	}
-
 }
