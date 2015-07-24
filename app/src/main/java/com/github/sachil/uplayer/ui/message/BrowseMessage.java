@@ -1,4 +1,4 @@
-package com.github.sachil.uplayer.message;
+package com.github.sachil.uplayer.ui.message;
 
 import java.util.List;
 

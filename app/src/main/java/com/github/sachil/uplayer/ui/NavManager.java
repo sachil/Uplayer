@@ -1,4 +1,4 @@
-package com.github.sachil.uplayer;
+package com.github.sachil.uplayer.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +10,15 @@ import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.model.types.UDAServiceType;
 
 import android.content.Context;
+import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.ExpandableListView;
 
-import com.github.sachil.uplayer.adapter.NavAdapter;
-import com.github.sachil.uplayer.content.PatchedExpandableListView;
-import com.github.sachil.uplayer.message.BrowseMessage;
-import com.github.sachil.uplayer.message.DeviceMessage;
+import com.github.sachil.uplayer.R;
+import com.github.sachil.uplayer.ui.adapter.NavAdapter;
+import com.github.sachil.uplayer.ui.content.PatchedExpandableListView;
+import com.github.sachil.uplayer.ui.message.BrowseMessage;
+import com.github.sachil.uplayer.ui.message.DeviceMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.BrowseCallback;
 import com.github.sachil.uplayer.upnp.dmc.ContentItem;
@@ -24,13 +26,12 @@ import com.github.sachil.uplayer.upnp.dms.ContentTree;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by 20001962 on 2015/7/23.
- */
-public class NavManager implements ExpandableListView.OnChildClickListener {
+public class NavManager implements ExpandableListView.OnChildClickListener,
+		View.OnClickListener {
 
 	private static final String TAG = NavManager.class.getSimpleName();
 	private Context mContext = null;
+	private DrawerLayout mDrawerLayout = null;
 	private PatchedExpandableListView mRenderer = null;
 	private PatchedExpandableListView mServer = null;
 	private PatchedExpandableListView mMedia = null;
@@ -69,7 +70,8 @@ public class NavManager implements ExpandableListView.OnChildClickListener {
 
 		case R.id.nav_library:
 			mServerAdapter.refresh(
-					mServerAdapter.getChild(groupPosition, childPosition), null);
+					mServerAdapter.getChild(groupPosition, childPosition),
+					null);
 			loadMedia((Device) mServerAdapter.getChild(groupPosition,
 					childPosition));
 			break;
@@ -77,9 +79,23 @@ public class NavManager implements ExpandableListView.OnChildClickListener {
 		case R.id.nav_media:
 			mMediaAdapter.refresh(
 					mMediaAdapter.getChild(groupPosition, childPosition), null);
+			mDrawerLayout.closeDrawers();
 			break;
 		}
 		return false;
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+		case R.id.nav_settings:
+
+			break;
+		case R.id.nav_exit:
+
+			break;
+		}
+		mDrawerLayout.closeDrawers();
 	}
 
 	public void onEventMainThread(DeviceMessage message) {
@@ -127,6 +143,7 @@ public class NavManager implements ExpandableListView.OnChildClickListener {
 	}
 
 	private void createView(View contentView) {
+		mDrawerLayout = (DrawerLayout)contentView.findViewById(R.id.main_drawer);
 		mRenderer = (PatchedExpandableListView) contentView
 				.findViewById(R.id.nav_renderer);
 		mRendererAdapter = new NavAdapter(mContext);
@@ -142,6 +159,10 @@ public class NavManager implements ExpandableListView.OnChildClickListener {
 		mMediaAdapter = new NavAdapter(mContext);
 		mMedia.setAdapter(mMediaAdapter);
 		mMedia.setOnChildClickListener(this);
+
+		contentView.findViewById(R.id.nav_settings).setOnClickListener(this);
+		contentView.findViewById(R.id.nav_exit).setOnClickListener(this);
+
 	}
 
 	private void loadMedia(Device device) {
@@ -155,5 +176,4 @@ public class NavManager implements ExpandableListView.OnChildClickListener {
 					isLocal));
 		}
 	}
-
 }

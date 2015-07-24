@@ -15,8 +15,10 @@
         android:id="@+id/nav_child_title"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginLeft="56dp"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="56dp"
         android:gravity="center_vertical"
+        android:maxLines="2"
         android:text="child" />
 </RelativeLayout>

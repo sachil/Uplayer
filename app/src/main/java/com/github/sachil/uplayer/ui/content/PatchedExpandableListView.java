@@ -1,4 +1,4 @@
-package com.github.sachil.uplayer.content;
+package com.github.sachil.uplayer.ui.content;
 
 import android.content.Context;
 import android.util.AttributeSet;

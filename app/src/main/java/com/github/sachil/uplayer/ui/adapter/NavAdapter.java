@@ -1,4 +1,4 @@
-package com.github.sachil.uplayer.adapter;
+package com.github.sachil.uplayer.ui.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +36,13 @@ public class NavAdapter extends BaseExpandableListAdapter {
 		mChilds = new ArrayList<>();
 	}
 
-	public void refresh(Object group,List child) {
+	public void refresh(Object group, List child) {
 
-		if(group != null){
+		if (group != null) {
 			mGroups.clear();
 			mGroups.add(group);
 		}
-		if(child != null){
+		if (child != null) {
 			mChilds.clear();
 			for (int i = 0; i < mGroups.size(); i++)
 				mChilds.add(child);
@@ -171,6 +171,11 @@ public class NavAdapter extends BaseExpandableListAdapter {
 				viewHolder.mGroupTitle
 						.setText(content.getContainer().getTitle());
 		}
+
+		if (isExpanded)
+			viewHolder.mGroupArrow.setImageResource(R.drawable.ic_arrow_up);
+		else
+			viewHolder.mGroupArrow.setImageResource(R.drawable.ic_arrow_down);
 
 		return convertView;
 	}

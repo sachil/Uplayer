@@ -4,8 +4,8 @@ import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.registry.DefaultRegistryListener;
 import org.fourthline.cling.registry.Registry;
 
-import com.github.sachil.uplayer.message.DeviceMessage;
-import com.github.sachil.uplayer.message.DeviceMessage.DEVICE_TYPE;
+import com.github.sachil.uplayer.ui.message.DeviceMessage;
+import com.github.sachil.uplayer.ui.message.DeviceMessage.DEVICE_TYPE;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 
 import de.greenrobot.event.EventBus;

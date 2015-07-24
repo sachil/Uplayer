@@ -13,7 +13,7 @@ import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.item.Item;
 
-import com.github.sachil.uplayer.message.BrowseMessage;
+import com.github.sachil.uplayer.ui.message.BrowseMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 
 import de.greenrobot.event.EventBus;

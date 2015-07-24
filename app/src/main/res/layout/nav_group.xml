@@ -16,8 +16,9 @@
         android:id="@+id/nav_group_title"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginLeft="56dp"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="56dp"
         android:gravity="center_vertical"
         android:text="group" />
 
@@ -28,5 +29,6 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
-        android:src="@android:drawable/arrow_down_float" />
+        android:maxLines="2"
+        android:src="@drawable/ic_arrow_down" />
 </RelativeLayout>
