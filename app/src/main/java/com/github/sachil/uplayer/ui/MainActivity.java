@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.UplayerUnity;
+import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.DeviceRegistryListener;
 import com.github.sachil.uplayer.upnp.dmr.MediaRenderer;
 import com.github.sachil.uplayer.upnp.dms.ContentGenerator;
@@ -36,9 +37,9 @@ public class MainActivity extends AppCompatActivity
 	private Context mContext = null;
 	private DrawerLayout mDrawerLayout = null;
 	private Toolbar mToolbar = null;
-	private RecyclerView mRecyclerView = null;
 	private NavigationView mNavigationView = null;
 	private NavManager mNavmanager = null;
+	private ContentManager mContentManager = null;
 	private AndroidUpnpService mUpnpService = null;
 
 	@Override
@@ -85,8 +86,11 @@ public class MainActivity extends AppCompatActivity
 			IBinder iBinder) {
 		Log.e(TAG, "Service is connected.");
 		mUpnpService = (AndroidUpnpService) iBinder;
+		UpnpUnity.UPNP_SERVICE = mUpnpService;
 		mNavmanager = new NavManager(mContext,
-				findViewById(android.R.id.content), mUpnpService);
+				findViewById(android.R.id.content));
+		mContentManager = new ContentManager(mContext,
+				findViewById(android.R.id.content));
 		MediaServer server = new MediaServer(mContext,
 				UplayerUnity.getInetAddress(mContext));
 		mUpnpService.getRegistry().addDevice(server.getDevice());
@@ -134,7 +138,6 @@ public class MainActivity extends AppCompatActivity
 		setSupportActionBar(mToolbar);
 		toggle.syncState();
 		mDrawerLayout.setDrawerListener(toggle);
-		mRecyclerView = (RecyclerView) findViewById(R.id.main_recyclerview);
 		mNavigationView = (NavigationView) findViewById(R.id.main_navigation);
 	}
 }

@@ -6,6 +6,7 @@ import com.github.sachil.uplayer.upnp.dms.ContentTree;
 import java.text.DecimalFormat;
 import java.util.UUID;
 
+import org.fourthline.cling.android.AndroidUpnpService;
 import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.support.model.DIDLObject;
 import org.fourthline.cling.support.model.WriteStatus;
@@ -53,6 +54,8 @@ public class UpnpUnity {
 	public static final String AUDIO_TRACK_ID = "audio_track_id";
 	
 	public static final int PORT = 8087;
+
+	public static AndroidUpnpService UPNP_SERVICE = null;
 
 	/**
 	 * 创建Container（容器）

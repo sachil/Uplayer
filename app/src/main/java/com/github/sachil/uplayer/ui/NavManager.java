@@ -3,7 +3,6 @@ package com.github.sachil.uplayer.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fourthline.cling.android.AndroidUpnpService;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.meta.Service;
@@ -41,12 +40,9 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 	private List<Device> mRendererList = null;
 	private List<Device> mServerList = null;
 	private List<ContentItem> mMediaList = null;
-	private AndroidUpnpService mUpnpService = null;
 
-	public NavManager(Context context, View contentView,
-			AndroidUpnpService upnpService) {
+	public NavManager(Context context, View contentView) {
 		mContext = context;
-		mUpnpService = upnpService;
 		mRendererList = new ArrayList<>();
 		mServerList = new ArrayList<>();
 		mMediaList = new ArrayList<>();
@@ -170,7 +166,7 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 				new UDAServiceType(UpnpUnity.SERVICE_CONTENT_DIRECTORY));
 		if (service != null) {
 			boolean isLocal = device instanceof RemoteDevice ? false : true;
-			mUpnpService.getControlPoint()
+			UpnpUnity.UPNP_SERVICE.getControlPoint()
 					.execute(new BrowseCallback(service, ContentTree
 							.getRootContentNode(isLocal).getContainer(),
 					isLocal));
