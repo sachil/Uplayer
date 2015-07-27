@@ -1,6 +1,10 @@
 package com.github.sachil.uplayer.upnp.dmc;
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.fourthline.cling.model.action.ActionInvocation;
@@ -31,9 +35,7 @@ public class BrowseCallback extends Browse {
 
 		super(service, container.getId(), BrowseFlag.DIRECT_CHILDREN, "*", 0,
 				null, new SortCriterion(true, "dc:title"));
-
 		mIsRootNode = container.getParentID() == null ? true : false;
-
 		mContentList = new ArrayList<>();
 		mService = service;
 		mIsLocal = isLocal;
@@ -54,7 +56,7 @@ public class BrowseCallback extends Browse {
 		}
 		for (Item item : didl.getItems())
 			mContentList.add(new ContentItem(item, mService));
-
+		sortList();
 		EventBus.getDefault()
 				.post(new BrowseMessage(mContentList, mIsRootNode));
 
@@ -70,5 +72,26 @@ public class BrowseCallback extends Browse {
 	public void failure(ActionInvocation arg0, UpnpResponse arg1, String arg2) {
 		// TODO Auto-generated method stub
 
+	}
+
+	private void sortList() {
+
+		Comparator<ContentItem> comparator = new Comparator<ContentItem>() {
+			@Override
+			public int compare(ContentItem item1, ContentItem item2) {
+
+				if (item1.isContainer() && item2.isContainer())
+					return item1.getContainer().getTitle().compareToIgnoreCase(
+							item2.getContainer().getTitle());
+				else if (!item1.isContainer() && !item2.isContainer())
+					return item1.getItem().getTitle()
+							.compareToIgnoreCase(item2.getItem().getTitle());
+				else if (item1.isContainer() && !item2.isContainer())
+					return -1;
+				else
+					return 1;
+			}
+		};
+		Collections.sort(mContentList, comparator);
 	}
 }

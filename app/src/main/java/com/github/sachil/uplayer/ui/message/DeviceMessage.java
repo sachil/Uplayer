@@ -2,9 +2,6 @@ package com.github.sachil.uplayer.ui.message;
 
 import org.fourthline.cling.model.meta.Device;
 
-/**
- * Created by 20001962 on 2015/7/23.
- */
 public class DeviceMessage {
 
 	public enum DEVICE_TYPE {

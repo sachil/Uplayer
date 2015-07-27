@@ -12,10 +12,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -24,11 +24,14 @@ import android.view.MenuItem;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.UplayerUnity;
+import com.github.sachil.uplayer.ui.message.ActionMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.DeviceRegistryListener;
 import com.github.sachil.uplayer.upnp.dmr.MediaRenderer;
 import com.github.sachil.uplayer.upnp.dms.ContentGenerator;
 import com.github.sachil.uplayer.upnp.dms.MediaServer;
+
+import de.greenrobot.event.EventBus;
 
 public class MainActivity extends AppCompatActivity
 		implements ServiceConnection {
@@ -63,6 +66,8 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if (!EventBus.getDefault().isRegistered(this))
+			EventBus.getDefault().register(this);
 	}
 
 	@Override
@@ -78,6 +83,10 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	protected void onDestroy() {
 		mNavmanager.clean();
+		mContentManager.clean();
+		if (EventBus.getDefault().isRegistered(this))
+			EventBus.getDefault().unregister(this);
+		unbindService(this);
 		super.onDestroy();
 	}
 
@@ -120,11 +129,38 @@ public class MainActivity extends AppCompatActivity
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
+
+		case android.R.id.home:
+
+			mDrawerLayout.openDrawer(GravityCompat.START);
+
+			break;
+
 		case R.id.menu_settings:
 
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (mContentManager.isRootNode())
+			super.onBackPressed();
+		else
+			mContentManager.viewParent();
+	}
+
+	public void onEvent(ActionMessage message) {
+
+		switch (message.getViewId()) {
+		case R.id.nav_settings:
+
+			break;
+		case R.id.nav_exit:
+			finish();
+			break;
+		}
 	}
 
 	private void initView() {
@@ -136,6 +172,7 @@ public class MainActivity extends AppCompatActivity
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
 				mDrawerLayout, mToolbar, R.string.app_name, R.string.app_name);
 		setSupportActionBar(mToolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		toggle.syncState();
 		mDrawerLayout.setDrawerListener(toggle);
 		mNavigationView = (NavigationView) findViewById(R.id.main_navigation);
