@@ -1,9 +1,7 @@
 package com.github.sachil.uplayer.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.meta.RemoteDevice;
@@ -44,10 +42,6 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 	private List<Device> mServerList = null;
 	private List<ContentItem> mMediaList = null;
 
-	private Device mSelectedRenderer = null;
-	private Device mSelectedServer = null;
-	private ContentItem mSelectedMedia = null;
-
 	public NavManager(Context context, View contentView) {
 		mContext = context;
 		mRendererList = new ArrayList<>();
@@ -66,30 +60,27 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 		switch (listView.getId()) {
 
 		case R.id.nav_renderer:
-			mSelectedRenderer = (Device) mRendererAdapter
+			UpnpUnity.CURRENT_RENDERER = (Device) mRendererAdapter
 					.getChild(groupPosition, childPosition);
-			mRendererAdapter.refresh(mSelectedRenderer, null);
+			mRendererAdapter.refresh(UpnpUnity.CURRENT_RENDERER, null);
 			break;
 
 		case R.id.nav_library:
-			mSelectedServer = (Device) mServerAdapter.getChild(groupPosition,
-					childPosition);
-			mServerAdapter.refresh(mSelectedServer, null);
+			UpnpUnity.CURRENT_SERVER = (Device) mServerAdapter
+					.getChild(groupPosition, childPosition);
+			mServerAdapter.refresh(UpnpUnity.CURRENT_SERVER, null);
 			loadMedia((Device) mServerAdapter.getChild(groupPosition,
 					childPosition));
 			break;
 
 		case R.id.nav_media:
 
-			mSelectedMedia = (ContentItem) mMediaAdapter.getChild(groupPosition,
-					childPosition);
-			mMediaAdapter.refresh(mSelectedMedia, null);
+			UpnpUnity.CURRENT_CONTAINER = (ContentItem) mMediaAdapter
+					.getChild(groupPosition, childPosition);
+			mMediaAdapter.refresh(UpnpUnity.CURRENT_CONTAINER, null);
 			mDrawerLayout.closeDrawers();
-			Map<String, Object> extras = new HashMap<>();
-			extras.put("dev", mSelectedServer);
-			extras.put("media", mSelectedMedia);
 			EventBus.getDefault()
-					.post(new ActionMessage(R.id.nav_media, 0, extras));
+					.post(new ActionMessage(R.id.nav_media, 0, null));
 			break;
 		}
 		return false;
@@ -115,8 +106,8 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 				if (mRendererList.contains(message.getDevice()))
 					mRendererList.remove(message.getDevice());
 			}
-			mSelectedRenderer = mRendererList.get(0);
-			mRendererAdapter.refresh(mSelectedRenderer, mRendererList);
+			UpnpUnity.CURRENT_RENDERER = mRendererList.get(0);
+			mRendererAdapter.refresh(UpnpUnity.CURRENT_RENDERER, mRendererList);
 		} else {
 			if (message.isAdd()) {
 				int position = mServerList.indexOf(message.getDevice());
@@ -129,8 +120,8 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 				if (mServerList.contains(message.getDevice()))
 					mServerList.remove(message.getDevice());
 			}
-			mSelectedServer = mServerList.get(0);
-			mServerAdapter.refresh(mSelectedServer, mServerList);
+			UpnpUnity.CURRENT_SERVER = mServerList.get(0);
+			mServerAdapter.refresh(UpnpUnity.CURRENT_SERVER, mServerList);
 			loadMedia((Device) mServerAdapter.getChild(0, 0));
 		}
 	}
@@ -138,13 +129,10 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 	public void onEventMainThread(BrowseMessage message) {
 		if (message.isRootNode()) {
 			mMediaList = message.getItems();
-			mSelectedMedia = mMediaList.get(0);
-			Map<String, Object> extras = new HashMap<>();
-			extras.put("dev", mSelectedServer);
-			extras.put("media", mSelectedMedia);
+			UpnpUnity.CURRENT_CONTAINER = mMediaList.get(0);
 			EventBus.getDefault()
-					.post(new ActionMessage(R.id.nav_media, 0, extras));
-			mMediaAdapter.refresh(mSelectedMedia, mMediaList);
+					.post(new ActionMessage(R.id.nav_media, 0, null));
+			mMediaAdapter.refresh(UpnpUnity.CURRENT_CONTAINER, mMediaList);
 		}
 	}
 

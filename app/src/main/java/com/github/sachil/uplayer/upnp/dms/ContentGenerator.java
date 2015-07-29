@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 
 
@@ -61,24 +62,24 @@ public class ContentGenerator {
 				if (mIsprepared)
 					return;
 				UpnpUnity.generateContainer(UpnpUnity.CONTENT_AUDIO_ID,
-						"Music", UpnpUnity.CONTENT_ROOT_ID, "object.container",
+						context.getString(R.string.title_music), UpnpUnity.CONTENT_ROOT_ID, "object.container",
 						true);
 				UpnpUnity.generateContainer(UpnpUnity.CONTENT_VIDEO_ID,
-						"Video", UpnpUnity.CONTENT_ROOT_ID, "object.container",
+						context.getString(R.string.title_video), UpnpUnity.CONTENT_ROOT_ID, "object.container",
 						true);
 				UpnpUnity.generateContainer(UpnpUnity.CONTENT_IMAGE_ID,
-						"Image", UpnpUnity.CONTENT_ROOT_ID, "object.container",
+						context.getString(R.string.title_photo), UpnpUnity.CONTENT_ROOT_ID, "object.container",
 						true);
 
-				UpnpUnity.generateContainer(UpnpUnity.AUDIO_Album_ID, "Album",
+				UpnpUnity.generateContainer(UpnpUnity.AUDIO_Album_ID, context.getString(R.string.title_album),
 						UpnpUnity.CONTENT_AUDIO_ID, "object.container", true);
 
 				UpnpUnity.generateContainer(UpnpUnity.AUDIO_Artist_ID,
-						"Artist", UpnpUnity.CONTENT_AUDIO_ID,
+						context.getString(R.string.title_artist), UpnpUnity.CONTENT_AUDIO_ID,
 						"object.container", true);
 
 				Container allTrackContainer = UpnpUnity.generateContainer(
-						UpnpUnity.AUDIO_TRACK_ID, "Track",
+						UpnpUnity.AUDIO_TRACK_ID, context.getString(R.string.title_tracks),
 						UpnpUnity.CONTENT_AUDIO_ID, "object.container", true);
 
 				Cursor cursor = context.getContentResolver().query(

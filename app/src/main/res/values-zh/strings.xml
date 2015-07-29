@@ -3,6 +3,9 @@
     <string name="title_music">音乐</string>
     <string name="title_video">视频</string>
     <string name="title_photo">图片</string>
+    <string name="title_album">专辑</string>
+    <string name="title_artist">歌手</string>
+    <string name="title_tracks">所有歌曲</string>
     <string name="title_library">服务器</string>
     <string name="title_renderer">渲染器</string>
     <string name="title_media">媒体内容</string>

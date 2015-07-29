@@ -3,6 +3,9 @@
     <string name="title_music">music</string>
     <string name="title_video">video</string>
     <string name="title_photo">photo</string>
+    <string name="title_album">Album</string>
+    <string name="title_artist">Artist</string>
+    <string name="title_tracks">Tracks</string>
     <string name="title_library">LIBRARY</string>
     <string name="title_renderer">RENDERER</string>
     <string name="title_media">MEDIA</string>

@@ -32,24 +32,22 @@ import org.fourthline.cling.support.renderingcontrol.lastchange.RenderingControl
 import org.fourthline.cling.support.renderingcontrol.lastchange.RenderingControlVariable.Volume;
 import org.fourthline.cling.model.gena.CancelReason;
 import android.content.Context;
-import android.os.Handler;
 import android.util.Log;
 
 import com.github.sachil.uplayer.UplayerUnity;
+import com.github.sachil.uplayer.ui.message.PlayerMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.XMLToMetadataParser.Metadata;
 
+import de.greenrobot.event.EventBus;
 
 public class Controller {
 	private static final String LOG_TAG = Controller.class.getSimpleName();
 	private static final int TIMEOUT = 5;
 	private static final String LAST_CHANGE = "LastChange";
 	private static final int DEFAULT_INSTANCE = 0;
-	@SuppressWarnings({ "rawtypes", "unused" })
 	private Service mConnectionService = null;
-	@SuppressWarnings("rawtypes")
 	private Service mAvTransportService = null;
-	@SuppressWarnings("rawtypes")
 	private Service mRendererControlService = null;
 	private AndroidUpnpService mAndroidUpnpService = null;
 	private boolean mIsMute = false;
@@ -60,35 +58,33 @@ public class Controller {
 	private SubscriptionCallback mAvSubscriptionCallback = null;
 	private SubscriptionCallback mRenSubscriptionCallback = null;
 
-	@SuppressWarnings("rawtypes")
 	public Controller(Context context, AndroidUpnpService androidUpnpService,
-			Device device, Handler handler) {
+			Device device) {
 		mContext = context;
 		mAndroidUpnpService = androidUpnpService;
 		if (device != null) {
-			mConnectionService = device.findService(new UDAServiceType(
-					UpnpUnity.SERVICE_CONNECTION_MANAGER));
-			mAvTransportService = device.findService(new UDAServiceType(
-					UpnpUnity.SERVICE_AVTRANSPORT));
-			mRendererControlService = device.findService(new UDAServiceType(
-					UpnpUnity.SERVICE_RENDERING_CONTROL));
-			registerLastChangeListener(handler);
+			mConnectionService = device.findService(
+					new UDAServiceType(UpnpUnity.SERVICE_CONNECTION_MANAGER));
+			mAvTransportService = device.findService(
+					new UDAServiceType(UpnpUnity.SERVICE_AVTRANSPORT));
+			mRendererControlService = device.findService(
+					new UDAServiceType(UpnpUnity.SERVICE_RENDERING_CONTROL));
+			registerLastChange();
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void changeDevice(Device device, Handler handler) {
+	public void changeDevice(Device device) {
 		if (device != null) {
 			mConnectionService = null;
 			mAvTransportService = null;
 			mRendererControlService = null;
-			mConnectionService = device.findService(new UDAServiceType(
-					UpnpUnity.SERVICE_CONNECTION_MANAGER));
-			mAvTransportService = device.findService(new UDAServiceType(
-					UpnpUnity.SERVICE_AVTRANSPORT));
-			mRendererControlService = device.findService(new UDAServiceType(
-					UpnpUnity.SERVICE_RENDERING_CONTROL));
-			registerLastChangeListener(handler);
+			mConnectionService = device.findService(
+					new UDAServiceType(UpnpUnity.SERVICE_CONNECTION_MANAGER));
+			mAvTransportService = device.findService(
+					new UDAServiceType(UpnpUnity.SERVICE_AVTRANSPORT));
+			mRendererControlService = device.findService(
+					new UDAServiceType(UpnpUnity.SERVICE_RENDERING_CONTROL));
+			registerLastChange();
 		}
 	}
 
@@ -163,7 +159,7 @@ public class Controller {
 			mAndroidUpnpService.getControlPoint().execute(callback);
 	}
 
-	public void getPosition(final Handler handler) {
+	public void getPosition() {
 		GetPositionInfo callback = new GetPositionInfo(mAvTransportService) {
 
 			@SuppressWarnings("rawtypes")
@@ -181,8 +177,9 @@ public class Controller {
 			public void received(ActionInvocation actionInvocation,
 					PositionInfo positionInfo) {
 				// TODO Auto-generated method stub
-				handler.sendMessage(handler.obtainMessage(
-						UpnpUnity.REFRESH_CURRENT_POSITION, positionInfo));
+				EventBus.getDefault().post(new PlayerMessage(
+						PlayerMessage.REFRESH_CURRENT_POSITION, positionInfo));
+
 			}
 		};
 		if (mAvTransportService != null)
@@ -299,7 +296,7 @@ public class Controller {
 		return mMetadata;
 	}
 
-	private void registerLastChangeListener(final Handler handler) {
+	private void registerLastChange() {
 
 		if (mXmlToMetadataparser == null)
 			mXmlToMetadataparser = new XMLToMetadataParser();
@@ -343,27 +340,25 @@ public class Controller {
 				// TODO Auto-generated method stub
 				try {
 					LastChange lastChange = new LastChange(
-							new AVTransportLastChangeParser(), subscription
-									.getCurrentValues().get(LAST_CHANGE)
+							new AVTransportLastChangeParser(),
+							subscription.getCurrentValues().get(LAST_CHANGE)
 									.toString());
 					if (lastChange != null) {
 
 						AVTransportURIMetaData avTransportURIMetaData = lastChange
-								.getEventedValue(
-										DEFAULT_INSTANCE,
+								.getEventedValue(DEFAULT_INSTANCE,
 										AVTransportVariable.AVTransportURIMetaData.class);
 						TransportState transportState = lastChange
-								.getEventedValue(
-										DEFAULT_INSTANCE,
+								.getEventedValue(DEFAULT_INSTANCE,
 										AVTransportVariable.TransportState.class);
 						CurrentPlayMode currentPlayMode = lastChange
-								.getEventedValue(
-										DEFAULT_INSTANCE,
+								.getEventedValue(DEFAULT_INSTANCE,
 										AVTransportVariable.CurrentPlayMode.class);
 						if (avTransportURIMetaData != null
 								&& avTransportURIMetaData.getValue() != null) {
 							String metadata = avTransportURIMetaData.getValue();
-							mXmlToMetadataparser.parseXmlToMetadata(mMetadata, metadata);
+							mXmlToMetadataparser.parseXmlToMetadata(mMetadata,
+									metadata);
 
 						}
 
@@ -375,8 +370,8 @@ public class Controller {
 							mMetadata.setPlayMode(currentPlayMode.getValue());
 						}
 
-						handler.sendMessage(handler.obtainMessage(
-								UpnpUnity.REFRESH_LASTCHANGE, 0, 0, mMetadata));
+						EventBus.getDefault().post(new PlayerMessage(
+								PlayerMessage.REFRESH_METADATA, mMetadata));
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -397,7 +392,8 @@ public class Controller {
 			protected void ended(GENASubscription subscription,
 					CancelReason reason, UpnpResponse responseStatus) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "avTransportCallback:Subscribe events is ended!");
+				Log.e(LOG_TAG,
+						"avTransportCallback:Subscribe events is ended!");
 			}
 		};
 
@@ -439,8 +435,7 @@ public class Controller {
 									.toString());
 					if (lastChange != null) {
 
-						Mute mute = lastChange.getEventedValue(
-								DEFAULT_INSTANCE,
+						Mute mute = lastChange.getEventedValue(DEFAULT_INSTANCE,
 								RenderingControlVariable.Mute.class);
 						Volume volume = lastChange.getEventedValue(
 								DEFAULT_INSTANCE,
@@ -450,8 +445,8 @@ public class Controller {
 
 						if (volume != null)
 							mMetadata.setVolume(volume.getValue().getVolume());
-						handler.sendMessage(handler.obtainMessage(
-								UpnpUnity.REFRESH_LASTCHANGE, 1, 0, mMetadata));
+						EventBus.getDefault().post(new PlayerMessage(
+								PlayerMessage.REFRESH_VOLUME, mMetadata));
 
 					}
 				} catch (Exception e) {
@@ -480,10 +475,10 @@ public class Controller {
 		};
 
 		if (mAvTransportService != null)
-			mAndroidUpnpService.getControlPoint().execute(
-					mAvSubscriptionCallback);
+			mAndroidUpnpService.getControlPoint()
+					.execute(mAvSubscriptionCallback);
 		if (mRendererControlService != null)
-			mAndroidUpnpService.getControlPoint().execute(
-					mRenSubscriptionCallback);
+			mAndroidUpnpService.getControlPoint()
+					.execute(mRenSubscriptionCallback);
 	}
 }

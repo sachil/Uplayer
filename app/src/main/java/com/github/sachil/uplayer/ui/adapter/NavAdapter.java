@@ -19,9 +19,6 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 
-/**
- * Created by 20001962 on 2015/7/17.
- */
 public class NavAdapter extends BaseExpandableListAdapter {
 
 	private static final String TAG = NavAdapter.class.getSimpleName();
@@ -110,7 +107,6 @@ public class NavAdapter extends BaseExpandableListAdapter {
 						.setText(content.getContainer().getTitle());
 			}
 		}
-
 		return convertView;
 	}
 

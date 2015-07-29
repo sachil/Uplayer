@@ -1,5 +1,6 @@
 package com.github.sachil.uplayer.upnp;
 
+import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 import com.github.sachil.uplayer.upnp.dms.ContentNode;
 import com.github.sachil.uplayer.upnp.dms.ContentTree;
 
@@ -7,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.UUID;
 
 import org.fourthline.cling.android.AndroidUpnpService;
+import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.support.model.DIDLObject;
 import org.fourthline.cling.support.model.WriteStatus;
@@ -37,13 +39,6 @@ public class UpnpUnity {
 	public static final String SERVICE_CONNECTION_MANAGER = "ConnectionManager";
 	public static final String SERVICE_RENDERING_CONTROL = "RenderingControl";
 
-	public static final int REFRESH_DMR_LIST = 0x01;
-	public static final int REFRESH_DMS_LIST = 0x02;
-	public static final int REFRESH_LIBRARY_LIST = 0x03;
-	public static final int REFRESH_LASTCHANGE = 0x04;
-	public static final int REFRESH_ALBUMART = 0x05;
-	public static final int REFRESH_CURRENT_POSITION = 0x06;
-
 	public static final String CONTENT_ROOT_ID = "0";
 	public static final String CONTENT_AUDIO_ID = "audio";
 	public static final String CONTENT_VIDEO_ID = "video";
@@ -56,6 +51,10 @@ public class UpnpUnity {
 	public static final int PORT = 8087;
 
 	public static AndroidUpnpService UPNP_SERVICE = null;
+	public static Device CURRENT_RENDERER = null;
+	public static Device CURRENT_SERVER = null;
+	public static ContentItem CURRENT_CONTAINER = null;
+	public static ContentItem PLAYING_ITEM = null;
 
 	/**
 	 * 创建Container（容器）

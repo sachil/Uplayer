@@ -160,6 +160,10 @@ public class MainActivity extends AppCompatActivity
 		case R.id.nav_exit:
 			finish();
 			break;
+
+		case -1:
+			startActivity(new Intent(mContext, PlayerActivity.class));
+			break;
 		}
 	}
 

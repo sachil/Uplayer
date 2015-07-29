@@ -12,6 +12,7 @@ import org.fourthline.cling.support.model.container.Container;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.github.sachil.uplayer.R;
@@ -34,9 +35,6 @@ public class ContentManager {
 	private ContentAdapter mContentAdapter = null;
 	private List<ContentItem> mContentList = null;
 
-	private Device mSelectedDevice = null;
-	private ContentItem mSelectedMedia = null;
-
 	public ContentManager(Context context, View contentView) {
 
 		mContext = context;
@@ -47,24 +45,26 @@ public class ContentManager {
 	}
 
 	public boolean isRootNode() {
-		return mSelectedMedia.getContainer().getParentID()
+
+		return UpnpUnity.CURRENT_CONTAINER.getContainer().getParentID()
 				.equalsIgnoreCase(ContentTree
 						.getRootContentNode(
-								mSelectedDevice instanceof LocalDevice)
+								UpnpUnity.CURRENT_SERVER instanceof LocalDevice)
 						.getContainer().getId());
 	}
 
 	public void viewParent() {
-		String parent = mSelectedMedia.getContainer().getParentID();
+		String parent = UpnpUnity.CURRENT_CONTAINER.getContainer()
+				.getParentID();
 		if (ContentTree.hasContentNode(parent,
-				mSelectedDevice instanceof LocalDevice)) {
+				UpnpUnity.CURRENT_SERVER instanceof LocalDevice)) {
 			Container container = ContentTree
 					.getContentNode(parent,
-							mSelectedDevice instanceof LocalDevice)
+							UpnpUnity.CURRENT_SERVER instanceof LocalDevice)
 					.getContainer();
-			browseContent(mSelectedDevice, container);
-			mSelectedMedia = new ContentItem(container,
-					mSelectedMedia.getService());
+			browseContent(UpnpUnity.CURRENT_SERVER, container);
+			UpnpUnity.CURRENT_CONTAINER = new ContentItem(container,
+					UpnpUnity.CURRENT_CONTAINER.getService());
 		}
 	}
 
@@ -75,21 +75,20 @@ public class ContentManager {
 	}
 
 	public void onEvent(ActionMessage message) {
-
 		switch (message.getViewId()) {
 		case R.id.nav_media:
-			HashMap<String, Object> extra = (HashMap<String, Object>) message
-					.getExtra();
-			mSelectedDevice = (Device) extra.get("dev");
-			mSelectedMedia = (ContentItem) extra.get("media");
-			browseContent(mSelectedDevice, mSelectedMedia.getContainer());
+			browseContent(UpnpUnity.CURRENT_SERVER,
+					UpnpUnity.CURRENT_CONTAINER.getContainer());
 			break;
 		case R.id.item_row:
-			mSelectedMedia = (ContentItem) message.getExtra();
-			if (mSelectedMedia.isContainer())
-				browseContent(mSelectedDevice, mSelectedMedia.getContainer());
-			else {
-
+			ContentItem contentItem = (ContentItem) message.getExtra();
+			if (contentItem.isContainer()) {
+				UpnpUnity.CURRENT_CONTAINER = contentItem;
+				browseContent(UpnpUnity.CURRENT_SERVER,
+						UpnpUnity.CURRENT_CONTAINER.getContainer());
+			} else {
+				UpnpUnity.PLAYING_ITEM = contentItem;
+				EventBus.getDefault().post(new ActionMessage(-1, 0, null));
 			}
 			break;
 		}
@@ -114,6 +113,6 @@ public class ContentManager {
 	private void browseContent(Device device, Container container) {
 		boolean isLoacl = device instanceof RemoteDevice ? false : true;
 		UpnpUnity.UPNP_SERVICE.getControlPoint().execute(new BrowseCallback(
-				mSelectedMedia.getService(), container, isLoacl));
+				UpnpUnity.CURRENT_CONTAINER.getService(), container, isLoacl));
 	}
 }
