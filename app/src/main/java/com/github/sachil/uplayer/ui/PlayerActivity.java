@@ -1,8 +1,12 @@
 package com.github.sachil.uplayer.ui;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.support.model.PlayMode;
 import org.fourthline.cling.support.model.PositionInfo;
+import org.fourthline.cling.support.model.SeekMode;
 import org.fourthline.cling.support.model.TransportState;
 
 import android.graphics.Bitmap;
@@ -27,10 +31,8 @@ import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.Controller;
+import com.github.sachil.uplayer.upnp.dmc.MetaDataToXMLGenerator;
 import com.github.sachil.uplayer.upnp.dmc.XMLToMetadataParser.Metadata;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
 
@@ -56,6 +58,7 @@ public class PlayerActivity extends AppCompatActivity
 	private Timer mPositionTimer = null;
 	private TimerTask mPositionTask = null;
 	private Controller mController = null;
+	private TransportState mState = TransportState.NO_MEDIA_PRESENT;
 	private int mBackgroundColor = 0;
 
 	@Override
@@ -68,6 +71,7 @@ public class PlayerActivity extends AppCompatActivity
 				&& UpnpUnity.CURRENT_RENDERER != null)
 			mController = new Controller(this, UpnpUnity.UPNP_SERVICE,
 					UpnpUnity.CURRENT_RENDERER);
+		playItem();
 	}
 
 	@Override
@@ -124,7 +128,10 @@ public class PlayerActivity extends AppCompatActivity
 
 			break;
 		case R.id.player_play_pause:
-
+			if (mState == TransportState.PLAYING)
+				mController.pause();
+			else if (mState == TransportState.PAUSED_PLAYBACK)
+				mController.play();
 			break;
 		case R.id.player_next:
 
@@ -162,6 +169,7 @@ public class PlayerActivity extends AppCompatActivity
 		if (id == PlayerMessage.REFRESH_METADATA) {
 			Metadata metadata = (Metadata) data;
 			TransportState state = metadata.getState();
+			mState = state;
 			if (state == TransportState.PLAYING) {
 				mPlayPauseButton
 						.setImageResource(R.drawable.ic_action_playback_pause);
@@ -175,17 +183,16 @@ public class PlayerActivity extends AppCompatActivity
 				 * 单独启动一个线程以一定的频率(通常是1s)去不断的获取当前的播放位置，
 				 * 该线程只会在transportState为PLAYING状态时才启动。
 				 */
-				mPositionTimer = new Timer();
-				mPositionTask = new TimerTask() {
-
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						mController.getPosition();
-					}
-				};
-				mPositionTimer.schedule(mPositionTask, 0, 1000);
-
+				if (mPositionTimer == null) {
+					mPositionTimer = new Timer();
+					mPositionTask = new TimerTask() {
+						@Override
+						public void run() {
+							mController.getPosition();
+						}
+					};
+					mPositionTimer.schedule(mPositionTask, 0, 1000);
+				}
 				PlayMode mode = metadata.getPlayMode();
 				if (mode == PlayMode.NORMAL)
 					mModeButton.setImageResource(
@@ -235,10 +242,15 @@ public class PlayerActivity extends AppCompatActivity
 						.setImageResource(R.drawable.ic_action_playback_play);
 
 				// transportState不是PLAYING状态时,停止获取当前播放的位置信息。
-				if (mPositionTimer != null)
-					mPositionTimer.cancel();
-				mCurrentTime.setText("00:00:00");
-				mSeekBar.setProgress(0);
+
+				if (state == TransportState.STOPPED) {
+					if (mPositionTimer != null)
+						mPositionTimer.cancel();
+					mCurrentTime.setText("00:00:00");
+					mSeekBar.setProgress(0);
+					mPositionTimer = null;
+					mPositionTask = null;
+				}
 			}
 		} else if (id == PlayerMessage.REFRESH_CURRENT_POSITION) {
 			PositionInfo info = (PositionInfo) data;
@@ -251,7 +263,7 @@ public class PlayerActivity extends AppCompatActivity
 				int position = (int) (((float) currentTime / totalTime) * 100);
 				mSeekBar.setProgress(position);
 			}
-		}else if(id == PlayerMessage.REFRESH_VOLUME){
+		} else if (id == PlayerMessage.REFRESH_VOLUME) {
 
 		}
 	}
@@ -273,17 +285,22 @@ public class PlayerActivity extends AppCompatActivity
 					@Override
 					public void onProgressChanged(SeekBar seekBar, int progress,
 							boolean fromUser) {
-
+						if (fromUser) {
+							long totalTime = ModelUtil.fromTimeString(
+									mController.getMetadata().getDuration());
+							mController.seek(SeekMode.REL_TIME,
+									ModelUtil.toTimeString(
+											(long) ((progress / 100f)
+													* totalTime)));
+						}
 					}
 
 					@Override
 					public void onStartTrackingTouch(SeekBar seekBar) {
-
 					}
 
 					@Override
 					public void onStopTrackingTouch(SeekBar seekBar) {
-
 					}
 				});
 
@@ -303,6 +320,27 @@ public class PlayerActivity extends AppCompatActivity
 		Palette palette = Palette.from(bitmap).generate();
 		mBackgroundColor = palette.getDarkMutedColor(
 				getResources().getColor(R.color.half_transparent));
+	}
+
+	private void playItem() {
+
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(1000);
+					mController.setUrl(
+							UpnpUnity.PLAYING_ITEM.getItem().getFirstResource().getValue(),
+							MetaDataToXMLGenerator
+									.metadataToXml(UpnpUnity.PLAYING_ITEM.getItem()));
+					Thread.sleep(1000);
+					mController.play();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		thread.start();
 	}
 
 }

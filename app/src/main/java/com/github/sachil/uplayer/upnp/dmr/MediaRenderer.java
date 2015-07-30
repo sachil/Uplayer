@@ -73,7 +73,7 @@ public class MediaRenderer {
 			@Override
 			protected AvtransportService createServiceInstance()
 					throws Exception {
-				return new AvtransportService(context,mAVTransportLastChange);
+				return new AvtransportService(mAVTransportLastChange);
 			}
 
 			@Override

@@ -42,7 +42,7 @@ import com.github.sachil.uplayer.upnp.dmc.XMLToMetadataParser.Metadata;
 import de.greenrobot.event.EventBus;
 
 public class Controller {
-	private static final String LOG_TAG = Controller.class.getSimpleName();
+	private static final String TAG = Controller.class.getSimpleName();
 	private static final int TIMEOUT = 5;
 	private static final String LAST_CHANGE = "LastChange";
 	private static final int DEFAULT_INSTANCE = 0;
@@ -89,6 +89,11 @@ public class Controller {
 	}
 
 	public void setUrl(String url, String metadata) {
+		
+		Log.e(TAG,"url:"+url+",metadata:"+metadata);
+		
+		
+		
 		SetAVTransportURI callback = new SetAVTransportURI(mAvTransportService,
 				url, metadata) {
 
@@ -97,7 +102,7 @@ public class Controller {
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "Set play uri failed! the reason is:" + message
+				Log.e(TAG, "Set play uri failed! the reason is:" + message
 						+ "the response details is:" + response);
 				UplayerUnity.showToast(mContext, message);
 			}
@@ -115,7 +120,7 @@ public class Controller {
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "Play failed! the reason is:" + message
+				Log.e(TAG, "Play failed! the reason is:" + message
 						+ "the response details is:" + response);
 				UplayerUnity.showToast(mContext, message);
 			}
@@ -132,7 +137,7 @@ public class Controller {
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "Pause failed! the reason is:" + message
+				Log.e(TAG, "Pause failed! the reason is:" + message
 						+ "the response details is:" + response);
 				UplayerUnity.showToast(mContext, message);
 			}
@@ -149,7 +154,7 @@ public class Controller {
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "Stop failed! the reason is:" + message
+				Log.e(TAG, "Stop failed! the reason is:" + message
 						+ "the response details is:" + response);
 				UplayerUnity.showToast(mContext, message);
 			}
@@ -167,7 +172,7 @@ public class Controller {
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "Get position failed! the reason is:" + message
+				Log.e(TAG, "Get position failed! the reason is:" + message
 						+ "the response details is:" + response);
 				UplayerUnity.showToast(mContext, message);
 			}
@@ -194,7 +199,7 @@ public class Controller {
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "Seek failed! the reason is:" + message
+				Log.e(TAG, "Seek failed! the reason is:" + message
 						+ "the response details is:" + response);
 				UplayerUnity.showToast(mContext, message);
 			}
@@ -211,7 +216,7 @@ public class Controller {
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "GetMute failed! the reason is:" + message
+				Log.e(TAG, "GetMute failed! the reason is:" + message
 						+ "the response details is:" + response);
 				UplayerUnity.showToast(mContext, message);
 			}
@@ -238,7 +243,7 @@ public class Controller {
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "SetMute failed! the reason is:" + message
+				Log.e(TAG, "SetMute failed! the reason is:" + message
 						+ "the response details is:" + response);
 				UplayerUnity.showToast(mContext, message);
 			}
@@ -255,7 +260,7 @@ public class Controller {
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "GetVolume failed! the reason is:" + message
+				Log.e(TAG, "GetVolume failed! the reason is:" + message
 						+ "the response details is:" + response);
 				UplayerUnity.showToast(mContext, message);
 			}
@@ -282,7 +287,7 @@ public class Controller {
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG, "SetVolume failed! the reason is:" + message
+				Log.e(TAG, "SetVolume failed! the reason is:" + message
 						+ "the response details is:" + response);
 				UplayerUnity.showToast(mContext, message);
 			}
@@ -316,7 +321,7 @@ public class Controller {
 					UpnpResponse responseStatus, Exception exception,
 					String defaultMsg) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG,
+				Log.e(TAG,
 						"avTransportCallback:Subscribe events failed!The reason is:"
 								+ createDefaultFailureMessage(responseStatus,
 										exception));
@@ -329,7 +334,7 @@ public class Controller {
 			protected void eventsMissed(GENASubscription subscription,
 					int numberOfMissedEvents) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG,
+				Log.e(TAG,
 						"avTransportCallback:Missed events,the number is:"
 								+ numberOfMissedEvents);
 			}
@@ -383,7 +388,7 @@ public class Controller {
 			@Override
 			protected void established(GENASubscription subscription) {
 				// TODO Auto-generated method stub
-				Log.i(LOG_TAG, "avTransportCallback:Established,the id is:"
+				Log.i(TAG, "avTransportCallback:Established,the id is:"
 						+ subscription.getSubscriptionId());
 			}
 
@@ -392,7 +397,7 @@ public class Controller {
 			protected void ended(GENASubscription subscription,
 					CancelReason reason, UpnpResponse responseStatus) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG,
+				Log.e(TAG,
 						"avTransportCallback:Subscribe events is ended!");
 			}
 		};
@@ -406,7 +411,7 @@ public class Controller {
 					UpnpResponse responseStatus, Exception exception,
 					String defaultMsg) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG,
+				Log.e(TAG,
 						"rendererControlCallback:Subscribe events failed!The reason is:"
 								+ createDefaultFailureMessage(responseStatus,
 										exception));
@@ -419,7 +424,7 @@ public class Controller {
 			protected void eventsMissed(GENASubscription subscription,
 					int numberOfMissedEvents) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG,
+				Log.e(TAG,
 						"rendererControlCallback:Missed events,the number is:"
 								+ numberOfMissedEvents);
 			}
@@ -460,7 +465,7 @@ public class Controller {
 			@Override
 			protected void established(GENASubscription subscription) {
 				// TODO Auto-generated method stub
-				Log.i(LOG_TAG, "rendererControlCallback:Established,the id is:"
+				Log.i(TAG, "rendererControlCallback:Established,the id is:"
 						+ subscription.getSubscriptionId());
 			}
 
@@ -469,7 +474,7 @@ public class Controller {
 			protected void ended(GENASubscription subscription,
 					CancelReason reason, UpnpResponse responseStatus) {
 				// TODO Auto-generated method stub
-				Log.e(LOG_TAG,
+				Log.e(TAG,
 						"rendererControlCallback:Subscribe events is ended!");
 			}
 		};

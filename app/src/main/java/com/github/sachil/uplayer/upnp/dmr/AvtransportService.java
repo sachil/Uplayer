@@ -37,25 +37,21 @@ import android.util.Xml;
 
 import com.github.sachil.uplayer.UplayerUnity;
 import com.github.sachil.uplayer.UplayerUnity.MEDIA_TYPE;
-import com.github.sachil.uplayer.player.AbstractAVPlayer;
-import com.github.sachil.uplayer.player.PlayerFactory;
+import com.github.sachil.uplayer.player.AVPlayer;
+import com.github.sachil.uplayer.player.PlayerBuilder;
 import com.github.sachil.uplayer.upnp.TransportStateChangedListener;
-
 
 /**
  * 这是dmr的核心service，它继承自AbstractAVTransportService，并重写父类中的抽象方法
  * 来和实际的player交互，它实现了一个状态改变的监听器：TransportStateChangedListener，
  * 该监听器的作用是监听player需要上报给dmc的一些状态变化，例如，player数据准备完成开始播放。
- * @author 20001962
- *
  */
-public class AvtransportService extends AbstractAVTransportService implements
-		TransportStateChangedListener {
+public class AvtransportService extends AbstractAVTransportService
+		implements TransportStateChangedListener {
 	private static final String LOG_TAG = AvtransportService.class
 			.getSimpleName();
 	private static final String DEFAULT_SPEED = "1";
-	private Context mContext = null;
-	private AbstractAVPlayer mPlayer = null;
+	private AVPlayer mPlayer = null;
 	private MediaInfo mMediaInfo = new MediaInfo();
 	private TransportInfo mTransportInfo = new TransportInfo(
 			TransportState.NO_MEDIA_PRESENT, TransportStatus.OK, DEFAULT_SPEED);
@@ -63,11 +59,9 @@ public class AvtransportService extends AbstractAVTransportService implements
 	private DeviceCapabilities mDeviceCapabilities = new DeviceCapabilities(
 			new StorageMedium[] { StorageMedium.NETWORK });
 	private TransportAction[] mTransportActions = new TransportAction[] {};
-	private MEDIA_TYPE mType = MEDIA_TYPE.AUDIO;
 
-	public AvtransportService(Context context, LastChange lastChange) {
+	public AvtransportService(LastChange lastChange) {
 		super(lastChange);
-		mContext = context;
 	}
 
 	@Override
@@ -91,7 +85,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 			@UpnpOutputArgument(name = "RecQualityModes", stateVariable = "PossibleRecordQualityModes", getterName = "getRecQualityModesString") })
 	public DeviceCapabilities getDeviceCapabilities(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 		return mDeviceCapabilities;
 	}
@@ -109,7 +103,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 			@UpnpOutputArgument(name = "WriteStatus", stateVariable = "RecordMediumWriteStatus", getterName = "getWriteStatus") })
 	public MediaInfo getMediaInfo(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 
 		return mMediaInfo;
@@ -127,15 +121,15 @@ public class AvtransportService extends AbstractAVTransportService implements
 			@UpnpOutputArgument(name = "AbsCount", stateVariable = "AbsoluteCounterPosition", getterName = "getAbsCount") })
 	public PositionInfo getPositionInfo(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 		PositionInfo positionInfo = null;
 		if (mPlayer == null) {
 			positionInfo = new PositionInfo();
 		} else {
 
-			String currentPosition = ModelUtil.toTimeString(mPlayer
-					.getCurrentPosition() / 1000);
+			String currentPosition = ModelUtil
+					.toTimeString(mPlayer.getCurrentPosition() / 1000);
 			String trackDuration = ModelUtil
 					.toTimeString(mPlayer.getDuration() / 1000);
 
@@ -154,13 +148,12 @@ public class AvtransportService extends AbstractAVTransportService implements
 			@UpnpOutputArgument(name = "CurrentSpeed", stateVariable = "TransportPlaySpeed", getterName = "getCurrentSpeed") })
 	public TransportInfo getTransportInfo(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub0
 
 		/**
 		 * 使用bubbleUpnp测试时，它会一直获取该信息，而使用skifta却并不会如此，
-		 * 难道是我回个dmc的消息有误，导致bubble无法获取想要的信息，而重复获取？
-		 * 现在还不太清楚。
+		 * 难道是我回个dmc的消息有误，导致bubble无法获取想要的信息，而重复获取？ 现在还不太清楚。
 		 */
 		return mTransportInfo;
 	}
@@ -171,7 +164,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 			@UpnpOutputArgument(name = "RecQualityMode", stateVariable = "CurrentRecordQualityMode", getterName = "getRecQualityMode") })
 	public TransportSettings getTransportSettings(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 
 		return mTransportSettings;
@@ -183,25 +176,18 @@ public class AvtransportService extends AbstractAVTransportService implements
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "CurrentURI", stateVariable = "AVTransportURI") String arg1,
 			@UpnpInputArgument(name = "CurrentURIMetaData", stateVariable = "AVTransportURIMetaData") String arg2)
-			throws AVTransportException {
-		// TODO Auto-generated method stub
-		Log.e(LOG_TAG, "metadata:" + arg2);
-
-		/**
-		 * 检查传递过来的uri是否符合规则并且有效
-		 */
+					throws AVTransportException {
+		// 检查传递过来的uri是否符合规则并且有效
 		URI uri = null;
 		if (arg1.startsWith("http")) {
 			try {
 				uri = new URI(arg1);
 				HttpFetch.validate(URIUtil.toURL(uri));
 			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new AVTransportException(ErrorCode.INVALID_ARGS,
 						"CurrentURI can not be null or malformed");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new AVTransportException(AVTransportErrorCode.READ_ERROR,
 						"Unable to read requested URI: " + uri);
@@ -210,27 +196,10 @@ public class AvtransportService extends AbstractAVTransportService implements
 			throw new AVTransportException(ErrorCode.INVALID_ARGS,
 					"Requested URI was not a network stream.");
 
-		/**
-		 * 通过分析得到的media类型，来生成或者调用不同的播放器
-		 */
-		if (mPlayer == null) {
-			mType = getMediaType(arg2);
-			mPlayer = PlayerFactory.createPlayer(mContext, this, mType);
-			mPlayer.setUri(arg1);
-		} else {
-			MEDIA_TYPE type = getMediaType(arg2);
-			if (mType == type) {
-				mPlayer.stop();
-				mPlayer.setUri(arg1);
-			} else {
-				mPlayer.close();
-				mPlayer = null;
-				mType = type;
-				mPlayer = PlayerFactory.createPlayer(mContext, this, mType);
-				mPlayer.setUri(arg1);
-			}
-		}
-
+		// 通过分析得到的media类型，来生成或者调用不同的播放器
+		MEDIA_TYPE type = getMediaType(arg2);
+		mPlayer = PlayerBuilder.build(this, type);
+		mPlayer.setUri(arg1);
 		mMediaInfo = new MediaInfo(arg1, arg2);
 
 		/**
@@ -241,18 +210,14 @@ public class AvtransportService extends AbstractAVTransportService implements
 		mTransportInfo = new TransportInfo(TransportState.STOPPED,
 				TransportStatus.OK, DEFAULT_SPEED);
 		mTransportActions = new TransportAction[] { TransportAction.Play };
-		getLastChange().setEventedValue(
-				getDefaultInstanceID(),
+		getLastChange().setEventedValue(getDefaultInstanceID(),
 				new AVTransportVariable.AVTransportURI(uri),
 				new AVTransportVariable.AVTransportURIMetaData(arg2),
 				new AVTransportVariable.TransportState(TransportState.STOPPED),
 				new AVTransportVariable.CurrentTransportActions(
 						mTransportActions));
-		
-		/**
-		 * 这里休息1秒的原因是：可能是通过cling频繁的发送lastchange，会导致某些lastchang
-		 * 无法接收到。
-		 */
+
+		// 这里休息1秒的原因是：可能是通过cling频繁的发送lastchange，会导致某些lastchang 无法接收到。
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -260,7 +225,6 @@ public class AvtransportService extends AbstractAVTransportService implements
 			e.printStackTrace();
 		}
 		getLastChange().fire(getPropertyChangeSupport());
-
 	}
 
 	@Override
@@ -268,7 +232,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 	public void play(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "Speed", stateVariable = "TransportPlaySpeed") String arg1)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 		Log.e(LOG_TAG, "Start to play!");
 		if (mPlayer != null) {
@@ -285,7 +249,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 	@UpnpAction
 	public void pause(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 		Log.e(LOG_TAG, "Start to pause!");
 		if (mPlayer != null) {
@@ -293,8 +257,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 					TransportStatus.OK, DEFAULT_SPEED);
 			mTransportActions = new TransportAction[] { TransportAction.Play,
 					TransportAction.Seek, TransportAction.Stop };
-			getLastChange().setEventedValue(
-					getDefaultInstanceID(),
+			getLastChange().setEventedValue(getDefaultInstanceID(),
 					new AVTransportVariable.TransportState(
 							TransportState.PAUSED_PLAYBACK),
 					new AVTransportVariable.CurrentTransportActions(
@@ -315,7 +278,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "Unit", stateVariable = "A_ARG_TYPE_SeekMode") String arg1,
 			@UpnpInputArgument(name = "Target", stateVariable = "A_ARG_TYPE_SeekTarget") String arg2)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 		if (mPlayer != null) {
 			if (!arg1.equalsIgnoreCase(SeekMode.REL_TIME.toString()))
@@ -323,8 +286,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 						"Only suport REL_TIME seek mode.");
 			mTransportInfo = new TransportInfo(TransportState.TRANSITIONING,
 					TransportStatus.OK, DEFAULT_SPEED);
-			getLastChange().setEventedValue(
-					getDefaultInstanceID(),
+			getLastChange().setEventedValue(getDefaultInstanceID(),
 					new AVTransportVariable.TransportState(
 							TransportState.TRANSITIONING));
 			getLastChange().fire(getPropertyChangeSupport());
@@ -342,7 +304,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 	@UpnpAction
 	public void stop(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 		Log.e(LOG_TAG, "Start to stop!");
 		if (mPlayer != null) {
@@ -350,8 +312,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 					TransportStatus.OK, DEFAULT_SPEED);
 			mTransportActions = new TransportAction[] { TransportAction.Play,
 					TransportAction.Seek };
-			getLastChange().setEventedValue(
-					getDefaultInstanceID(),
+			getLastChange().setEventedValue(getDefaultInstanceID(),
 					new AVTransportVariable.TransportState(
 							TransportState.STOPPED),
 					new AVTransportVariable.CurrentTransportActions(
@@ -370,7 +331,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 	@UpnpAction
 	public void previous(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 
 	}
@@ -379,7 +340,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 	@UpnpAction
 	public void next(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 
 	}
@@ -388,7 +349,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 	@UpnpAction
 	public void record(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 
 	}
@@ -399,7 +360,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "NextURI", stateVariable = "AVTransportURI") String arg1,
 			@UpnpInputArgument(name = "NextURIMetaData", stateVariable = "AVTransportURIMetaData") String arg2)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 
 	}
@@ -409,7 +370,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 	public void setPlayMode(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "NewPlayMode", stateVariable = "CurrentPlayMode") String arg1)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 
 	}
@@ -419,7 +380,7 @@ public class AvtransportService extends AbstractAVTransportService implements
 	public void setRecordQualityMode(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "NewRecordQualityMode", stateVariable = "CurrentRecordQualityMode") String arg1)
-			throws AVTransportException {
+					throws AVTransportException {
 		// TODO Auto-generated method stub
 
 	}
@@ -484,16 +445,26 @@ public class AvtransportService extends AbstractAVTransportService implements
 		Log.e(LOG_TAG, "State has changed:" + state);
 		mTransportInfo = new TransportInfo(state, TransportStatus.OK,
 				DEFAULT_SPEED);
-		if (state == TransportState.PLAYING)
+
+		switch (state) {
+		case PLAYING:
 			mTransportActions = new TransportAction[] { TransportAction.Pause,
-					TransportAction.Stop, TransportAction.Seek };
-		else if (state == TransportState.STOPPED)
+					TransportAction.Stop, TransportAction.Seek,
+					TransportAction.Next, TransportAction.Previous };
+			break;
+		case PAUSED_PLAYBACK:
 			mTransportActions = new TransportAction[] { TransportAction.Play,
-					TransportAction.Seek };
-		else if (state == TransportState.TRANSITIONING)
+					TransportAction.Stop, TransportAction.Seek,
+					TransportAction.Next, TransportAction.Previous };
+			break;
+		case STOPPED:
+			mTransportActions = new TransportAction[] { TransportAction.Play};
+			break;
+		case TRANSITIONING:
 			mTransportActions = new TransportAction[] {};
-		getLastChange().setEventedValue(
-				getDefaultInstanceID(),
+			break;
+		}
+		getLastChange().setEventedValue(getDefaultInstanceID(),
 				new AVTransportVariable.TransportState(state),
 				new AVTransportVariable.CurrentTransportActions(
 						mTransportActions));

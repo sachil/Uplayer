@@ -10,7 +10,6 @@ import org.fourthline.cling.support.model.ProtocolInfos;
  * 所以并不需要特别区分每一个连接。而在其它情景下，ConnectionManagerService就会显得很
  * 重要，例如当程序采用这种方式获取数据时：dmc告知dms采用http-post方式，将数据传输至dmr
  * 时，每个连接的连接标识就会变得很重要。
- * @author 20001962
  *
  */
 

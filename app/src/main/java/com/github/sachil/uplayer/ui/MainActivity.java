@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.UplayerUnity;
+import com.github.sachil.uplayer.player.MusicService;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.DeviceRegistryListener;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity
 		initView();
 		bindService(new Intent(this, AndroidUpnpServiceImpl.class), this,
 				Context.BIND_AUTO_CREATE);
+		startService(new Intent(mContext, MusicService.class));
 	}
 
 	@Override
@@ -158,6 +160,7 @@ public class MainActivity extends AppCompatActivity
 
 			break;
 		case R.id.nav_exit:
+			stopService(new Intent(mContext,MusicService.class));
 			finish();
 			break;
 
