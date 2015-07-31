@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    android:fitsSystemWindows="true"
+    android:id="@+id/playbar_layout"
+    android:clickable="true">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/playbar_album"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:background="?attr/selectableItemBackground"
+        app:actualImageScaleType="centerCrop"
+        app:roundAsCircle="true"
+        app:placeholderImage="@drawable/ic_launcher"
+        app:placeholderImageScaleType="centerCrop"/>
+
+    <ImageView
+        android:id="@+id/playbar_playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_action_list"/>
+
+    <ImageView
+        android:id="@+id/playbar_playpause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@id/playbar_playlist"
+        android:src="@drawable/ic_action_playback_play"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@id/playbar_playpause"
+        android:layout_toRightOf="@+id/playbar_album">
+
+        <TextView
+            android:id="@+id/playbar_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="16dp"
+            android:layout_weight="2"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:text="Hello morning"
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/playbar_artist"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:text="cheery"
+            android:textColor="@color/white"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

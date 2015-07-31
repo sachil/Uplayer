@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity
 	private Toolbar mToolbar = null;
 	private NavigationView mNavigationView = null;
 	private NavManager mNavmanager = null;
+	private PlaybarManager mPlaybarManager = null;
 	private ContentManager mContentManager = null;
 	private AndroidUpnpService mUpnpService = null;
 
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	protected void onDestroy() {
 		mNavmanager.clean();
+		mPlaybarManager.clean();
 		mContentManager.clean();
 		if (EventBus.getDefault().isRegistered(this))
 			EventBus.getDefault().unregister(this);
@@ -99,6 +101,8 @@ public class MainActivity extends AppCompatActivity
 		mUpnpService = (AndroidUpnpService) iBinder;
 		UpnpUnity.UPNP_SERVICE = mUpnpService;
 		mNavmanager = new NavManager(mContext,
+				findViewById(android.R.id.content));
+		mPlaybarManager = new PlaybarManager(mContext,
 				findViewById(android.R.id.content));
 		mContentManager = new ContentManager(mContext,
 				findViewById(android.R.id.content));
@@ -157,15 +161,10 @@ public class MainActivity extends AppCompatActivity
 
 		switch (message.getViewId()) {
 		case R.id.nav_settings:
-
 			break;
 		case R.id.nav_exit:
-			stopService(new Intent(mContext,MusicService.class));
+			stopService(new Intent(mContext, MusicService.class));
 			finish();
-			break;
-
-		case -1:
-			startActivity(new Intent(mContext, PlayerActivity.class));
 			break;
 		}
 	}

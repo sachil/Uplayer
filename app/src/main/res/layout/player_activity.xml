@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,15 +10,21 @@
         android:id="@+id/player_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/half_transparent"
         android:fitsSystemWindows="true">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/half_transparent"
+            android:fitsSystemWindows="true">
+        </View>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/player_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -29,10 +36,10 @@
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
                     android:gravity="center"
-                    android:textColor="@color/white"
                     android:paddingLeft="16dp"
                     android:singleLine="true"
-                    android:textSize="20sp" />
+                    android:textColor="@color/white"
+                    android:textSize="20sp"/>
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
@@ -44,10 +51,9 @@
             android:layout_marginBottom="16dp"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:textColor="@color/white"
             android:singleLine="true"
-            android:text="Artist"
-            android:textSize="16sp" />
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/player_album"
@@ -58,8 +64,7 @@
             android:gravity="center"
             android:singleLine="true"
             android:textColor="@color/white"
-            android:text="Album"
-            android:textSize="14sp" />
+            android:textSize="14sp"/>
 
 
         <com.facebook.drawee.view.SimpleDraweeView
@@ -68,9 +73,9 @@
             android:layout_height="0dp"
             android:layout_centerInParent="true"
             android:background="?attr/selectableItemBackground"
-            android:scaleType="centerInside"
             app:layout_heightPercent="50%"
-            app:layout_widthPercent="90%" />
+            app:layout_widthPercent="90%"
+            app:actualImageScaleType="centerCrop"/>
 
 
         <RelativeLayout
@@ -87,7 +92,7 @@
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:text="00:00:00"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/player_total_time"
@@ -97,7 +102,7 @@
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:text="00:00:00"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"/>
 
             <SeekBar
                 android:id="@+id/player_seekbar"
@@ -108,7 +113,10 @@
                 android:layout_marginRight="16dp"
                 android:layout_toLeftOf="@id/player_total_time"
                 android:layout_toRightOf="@id/player_current_time"
-                android:max="100" />
+                android:max="100"
+                android:progressBackgroundTint="@color/grey_500"
+                android:progressTint="@color/white"
+                android:thumbTint="@color/white"/>
 
         </RelativeLayout>
 
@@ -131,7 +139,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
-                    android:src="@drawable/ic_action_playback_repeat" />
+                    android:src="@drawable/ic_action_playback_repeat"/>
             </LinearLayout>
 
             <LinearLayout
@@ -146,7 +154,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
-                    android:src="@drawable/ic_action_playback_prev" />
+                    android:src="@drawable/ic_action_playback_prev"/>
             </LinearLayout>
 
             <LinearLayout
@@ -161,7 +169,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
-                    android:src="@drawable/ic_action_playback_play" />
+                    android:src="@drawable/ic_action_playback_play"/>
             </LinearLayout>
 
             <LinearLayout
@@ -176,7 +184,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
-                    android:src="@drawable/ic_action_playback_next" />
+                    android:src="@drawable/ic_action_playback_next"/>
             </LinearLayout>
 
             <LinearLayout
@@ -191,7 +199,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
-                    android:src="@drawable/ic_action_list" />
+                    android:src="@drawable/ic_action_list"/>
             </LinearLayout>
 
         </LinearLayout>

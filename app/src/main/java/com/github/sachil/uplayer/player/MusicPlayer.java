@@ -89,6 +89,7 @@ public class MusicPlayer implements AVPlayer, MediaPlayer.OnPreparedListener,
 
 	@Override
 	public void setUri(String uri) {
+		mListener.transportStateChanged(TransportState.TRANSITIONING);
 		mUrl = uri;
 		mUrlChanged = true;
 		mIsPrepared = false;
@@ -102,7 +103,6 @@ public class MusicPlayer implements AVPlayer, MediaPlayer.OnPreparedListener,
 				mMediaPlayer.reset();
 				mMediaPlayer.setDataSource(mUrl);
 				mMediaPlayer.prepareAsync();
-				mListener.transportStateChanged(TransportState.TRANSITIONING);
 			} else {
 				mMediaPlayer.start();
 				mListener.transportStateChanged(TransportState.PLAYING);

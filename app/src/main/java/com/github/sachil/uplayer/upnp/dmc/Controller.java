@@ -46,6 +46,9 @@ public class Controller {
 	private static final int TIMEOUT = 5;
 	private static final String LAST_CHANGE = "LastChange";
 	private static final int DEFAULT_INSTANCE = 0;
+
+	private static Controller mController = null;
+
 	private Service mConnectionService = null;
 	private Service mAvTransportService = null;
 	private Service mRendererControlService = null;
@@ -54,14 +57,12 @@ public class Controller {
 	private int mCurrentVolume = 0;
 	private XMLToMetadataParser mXmlToMetadataparser = null;
 	private Metadata mMetadata = null;
-	private Context mContext = null;
 	private SubscriptionCallback mAvSubscriptionCallback = null;
 	private SubscriptionCallback mRenSubscriptionCallback = null;
 
-	public Controller(Context context, AndroidUpnpService androidUpnpService,
-			Device device) {
-		mContext = context;
-		mAndroidUpnpService = androidUpnpService;
+	private Controller() {
+		mAndroidUpnpService = UpnpUnity.UPNP_SERVICE;
+		Device device = UpnpUnity.CURRENT_RENDERER;
 		if (device != null) {
 			mConnectionService = device.findService(
 					new UDAServiceType(UpnpUnity.SERVICE_CONNECTION_MANAGER));
@@ -69,8 +70,14 @@ public class Controller {
 					new UDAServiceType(UpnpUnity.SERVICE_AVTRANSPORT));
 			mRendererControlService = device.findService(
 					new UDAServiceType(UpnpUnity.SERVICE_RENDERING_CONTROL));
-			registerLastChange();
 		}
+	}
+
+	public static Controller getInstance(){
+		if(mController == null)
+			mController = new Controller();
+		return mController;
+
 	}
 
 	public void changeDevice(Device device) {
@@ -89,11 +96,7 @@ public class Controller {
 	}
 
 	public void setUrl(String url, String metadata) {
-		
-		Log.e(TAG,"url:"+url+",metadata:"+metadata);
-		
-		
-		
+
 		SetAVTransportURI callback = new SetAVTransportURI(mAvTransportService,
 				url, metadata) {
 
@@ -104,7 +107,7 @@ public class Controller {
 				// TODO Auto-generated method stub
 				Log.e(TAG, "Set play uri failed! the reason is:" + message
 						+ "the response details is:" + response);
-				UplayerUnity.showToast(mContext, message);
+				//UplayerUnity.showToast(mContext, message);
 			}
 		};
 		if (mAvTransportService != null)
@@ -122,7 +125,7 @@ public class Controller {
 				// TODO Auto-generated method stub
 				Log.e(TAG, "Play failed! the reason is:" + message
 						+ "the response details is:" + response);
-				UplayerUnity.showToast(mContext, message);
+				//UplayerUnity.showToast(mContext, message);
 			}
 		};
 		if (mAvTransportService != null)
@@ -139,7 +142,7 @@ public class Controller {
 				// TODO Auto-generated method stub
 				Log.e(TAG, "Pause failed! the reason is:" + message
 						+ "the response details is:" + response);
-				UplayerUnity.showToast(mContext, message);
+				//UplayerUnity.showToast(mContext, message);
 			}
 		};
 		if (mAvTransportService != null)
@@ -156,7 +159,7 @@ public class Controller {
 				// TODO Auto-generated method stub
 				Log.e(TAG, "Stop failed! the reason is:" + message
 						+ "the response details is:" + response);
-				UplayerUnity.showToast(mContext, message);
+				//UplayerUnity.showToast(mContext, message);
 			}
 		};
 
@@ -174,7 +177,7 @@ public class Controller {
 				// TODO Auto-generated method stub
 				Log.e(TAG, "Get position failed! the reason is:" + message
 						+ "the response details is:" + response);
-				UplayerUnity.showToast(mContext, message);
+				//UplayerUnity.showToast(mContext, message);
 			}
 
 			@SuppressWarnings("rawtypes")
@@ -201,7 +204,7 @@ public class Controller {
 				// TODO Auto-generated method stub
 				Log.e(TAG, "Seek failed! the reason is:" + message
 						+ "the response details is:" + response);
-				UplayerUnity.showToast(mContext, message);
+				//UplayerUnity.showToast(mContext, message);
 			}
 		};
 		if (mAvTransportService != null)
@@ -218,7 +221,7 @@ public class Controller {
 				// TODO Auto-generated method stub
 				Log.e(TAG, "GetMute failed! the reason is:" + message
 						+ "the response details is:" + response);
-				UplayerUnity.showToast(mContext, message);
+				//UplayerUnity.showToast(mContext, message);
 			}
 
 			@SuppressWarnings("rawtypes")
@@ -245,7 +248,7 @@ public class Controller {
 				// TODO Auto-generated method stub
 				Log.e(TAG, "SetMute failed! the reason is:" + message
 						+ "the response details is:" + response);
-				UplayerUnity.showToast(mContext, message);
+				//UplayerUnity.showToast(mContext, message);
 			}
 		};
 		if (mRendererControlService != null)
@@ -262,7 +265,7 @@ public class Controller {
 				// TODO Auto-generated method stub
 				Log.e(TAG, "GetVolume failed! the reason is:" + message
 						+ "the response details is:" + response);
-				UplayerUnity.showToast(mContext, message);
+				//UplayerUnity.showToast(mContext, message);
 			}
 
 			@SuppressWarnings("rawtypes")
@@ -289,7 +292,7 @@ public class Controller {
 				// TODO Auto-generated method stub
 				Log.e(TAG, "SetVolume failed! the reason is:" + message
 						+ "the response details is:" + response);
-				UplayerUnity.showToast(mContext, message);
+				//UplayerUnity.showToast(mContext, message);
 			}
 		};
 		if (mRendererControlService != null)
@@ -301,7 +304,7 @@ public class Controller {
 		return mMetadata;
 	}
 
-	private void registerLastChange() {
+	public void registerLastChange() {
 
 		if (mXmlToMetadataparser == null)
 			mXmlToMetadataparser = new XMLToMetadataParser();
@@ -325,8 +328,8 @@ public class Controller {
 						"avTransportCallback:Subscribe events failed!The reason is:"
 								+ createDefaultFailureMessage(responseStatus,
 										exception));
-				UplayerUnity.showToast(mContext,
-						createDefaultFailureMessage(responseStatus, exception));
+//				UplayerUnity.showToast(mContext,
+//						createDefaultFailureMessage(responseStatus, exception));
 			}
 
 			@SuppressWarnings("rawtypes")
@@ -415,8 +418,8 @@ public class Controller {
 						"rendererControlCallback:Subscribe events failed!The reason is:"
 								+ createDefaultFailureMessage(responseStatus,
 										exception));
-				UplayerUnity.showToast(mContext,
-						createDefaultFailureMessage(responseStatus, exception));
+//				UplayerUnity.showToast(mContext,
+//						createDefaultFailureMessage(responseStatus, exception));
 			}
 
 			@SuppressWarnings("rawtypes")

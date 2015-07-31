@@ -114,8 +114,8 @@ public class XMLToMetadataParser {
 		private TransportState mState = TransportState.NO_MEDIA_PRESENT;
 
 		public Metadata() {
-			String defaultValue = UplayerUnity.getResources().getString(
-					R.string.app_name);
+			String defaultValue = UplayerUnity.getResources()
+					.getString(R.string.title_unknown);
 			setTitle(defaultValue);
 			setCreator(defaultValue);
 			setAlbum(defaultValue);
@@ -185,8 +185,8 @@ public class XMLToMetadataParser {
 
 		public void setDuration(String duration) {
 			if (duration != null)
-				mDuration = ModelUtil.toTimeString(ModelUtil
-						.fromTimeString(duration));
+				mDuration = ModelUtil
+						.toTimeString(ModelUtil.fromTimeString(duration));
 		}
 
 		public String getTitle() {

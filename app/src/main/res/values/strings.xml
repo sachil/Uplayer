@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Uplayer</string>
+    <string name="title_unknown">Unknown</string>
     <string name="title_music">music</string>
     <string name="title_video">video</string>
     <string name="title_photo">photo</string>

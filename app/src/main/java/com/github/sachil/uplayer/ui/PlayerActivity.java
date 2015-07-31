@@ -66,12 +66,9 @@ public class PlayerActivity extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.player_activity);
 		initView();
+		mController = Controller.getInstance();
+		mController.registerLastChange();
 
-		if (UpnpUnity.UPNP_SERVICE != null
-				&& UpnpUnity.CURRENT_RENDERER != null)
-			mController = new Controller(this, UpnpUnity.UPNP_SERVICE,
-					UpnpUnity.CURRENT_RENDERER);
-		playItem();
 	}
 
 	@Override
@@ -174,7 +171,7 @@ public class PlayerActivity extends AppCompatActivity
 				mPlayPauseButton
 						.setImageResource(R.drawable.ic_action_playback_pause);
 				mTitle.setText(metadata.getTitle());
-				mArtist.setText(metadata.getArtist());
+				mArtist.setText(metadata.getCreator());
 				mAlbum.setText(metadata.getAlbum());
 				mTotalTime.setText(metadata.getDuration());
 
@@ -318,7 +315,7 @@ public class PlayerActivity extends AppCompatActivity
 
 	private void generateBackgroundColor(Bitmap bitmap) {
 		Palette palette = Palette.from(bitmap).generate();
-		mBackgroundColor = palette.getDarkMutedColor(
+		mBackgroundColor = palette.getLightMutedColor(
 				getResources().getColor(R.color.half_transparent));
 	}
 
@@ -330,9 +327,10 @@ public class PlayerActivity extends AppCompatActivity
 				try {
 					Thread.sleep(1000);
 					mController.setUrl(
-							UpnpUnity.PLAYING_ITEM.getItem().getFirstResource().getValue(),
-							MetaDataToXMLGenerator
-									.metadataToXml(UpnpUnity.PLAYING_ITEM.getItem()));
+							UpnpUnity.PLAYING_ITEM.getItem().getFirstResource()
+									.getValue(),
+							MetaDataToXMLGenerator.metadataToXml(
+									UpnpUnity.PLAYING_ITEM.getItem()));
 					Thread.sleep(1000);
 					mController.play();
 				} catch (InterruptedException e) {
