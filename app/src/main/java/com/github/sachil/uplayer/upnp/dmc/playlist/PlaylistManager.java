@@ -15,7 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.github.sachil.uplayer.UplayerUnity;
+import com.github.sachil.uplayer.Utils;
 import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 import com.github.sachil.uplayer.upnp.dmc.MetaDataToXMLGenerator;
 
@@ -47,7 +47,7 @@ public class PlaylistManager {
 			FileOutputStream fos = context.openFileOutput(name,
 					Context.MODE_PRIVATE);
 			fos.close();
-			context.sendBroadcast(new Intent(UplayerUnity.PLAYLISTS_EDITED));
+			context.sendBroadcast(new Intent(Utils.PLAYLISTS_EDITED));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -113,7 +113,7 @@ public class PlaylistManager {
 		boolean result = context.deleteFile(name);
 		mJsonArray = new JSONArray();
 		if (result)
-			context.sendBroadcast(new Intent(UplayerUnity.PLAYLISTS_EDITED));
+			context.sendBroadcast(new Intent(Utils.PLAYLISTS_EDITED));
 		return result;
 	}
 
@@ -124,7 +124,7 @@ public class PlaylistManager {
 			if (!context.deleteFile(name))
 				result = false;
 		}
-		context.sendBroadcast(new Intent(UplayerUnity.PLAYLISTS_EDITED));
+		context.sendBroadcast(new Intent(Utils.PLAYLISTS_EDITED));
 		return result;
 	}
 

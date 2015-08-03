@@ -23,7 +23,7 @@ import android.view.MenuItem;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.github.sachil.uplayer.R;
-import com.github.sachil.uplayer.UplayerUnity;
+import com.github.sachil.uplayer.Utils;
 import com.github.sachil.uplayer.player.MusicService;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity
 		setContentView(R.layout.activity_main);
 		mContext = this;
 		mContext = this;
-		UplayerUnity.setContext(mContext);
 		initView();
 		bindService(new Intent(this, AndroidUpnpServiceImpl.class), this,
 				Context.BIND_AUTO_CREATE);
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity
 		mContentManager = new ContentManager(mContext,
 				findViewById(android.R.id.content));
 		MediaServer server = new MediaServer(mContext,
-				UplayerUnity.getInetAddress(mContext));
+				Utils.getInetAddress(mContext));
 		mUpnpService.getRegistry().addDevice(server.getDevice());
 		MediaRenderer renderer = new MediaRenderer(mContext);
 		mUpnpService.getRegistry().addDevice(renderer.getDevice());

@@ -12,7 +12,7 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.github.sachil.uplayer.R;
-import com.github.sachil.uplayer.UplayerUnity;
+import com.github.sachil.uplayer.Utils;
 
 public class XMLToMetadataParser {
 	private static final String LOG_TAG = XMLToMetadataParser.class
@@ -114,8 +114,7 @@ public class XMLToMetadataParser {
 		private TransportState mState = TransportState.NO_MEDIA_PRESENT;
 
 		public Metadata() {
-			String defaultValue = UplayerUnity.getResources()
-					.getString(R.string.title_unknown);
+			String defaultValue = "";
 			setTitle(defaultValue);
 			setCreator(defaultValue);
 			setAlbum(defaultValue);

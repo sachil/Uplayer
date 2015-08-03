@@ -31,12 +31,11 @@ import org.seamless.util.URIUtil;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.content.Context;
 import android.util.Log;
 import android.util.Xml;
 
-import com.github.sachil.uplayer.UplayerUnity;
-import com.github.sachil.uplayer.UplayerUnity.MEDIA_TYPE;
+import com.github.sachil.uplayer.Utils;
+import com.github.sachil.uplayer.Utils.MEDIA_TYPE;
 import com.github.sachil.uplayer.player.AVPlayer;
 import com.github.sachil.uplayer.player.PlayerBuilder;
 import com.github.sachil.uplayer.upnp.TransportStateChangedListener;
@@ -428,9 +427,9 @@ public class AvtransportService extends AbstractAVTransportService
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (itemClass.contains(UplayerUnity.AUDIO_PREFIX))
-			return UplayerUnity.MEDIA_TYPE.AUDIO;
-		else if (itemClass.contains(UplayerUnity.VIDEO_PREFIX))
+		if (itemClass.contains(Utils.AUDIO_PREFIX))
+			return Utils.MEDIA_TYPE.AUDIO;
+		else if (itemClass.contains(Utils.VIDEO_PREFIX))
 			return MEDIA_TYPE.VIDEO;
 		else
 			return MEDIA_TYPE.IMAGE;

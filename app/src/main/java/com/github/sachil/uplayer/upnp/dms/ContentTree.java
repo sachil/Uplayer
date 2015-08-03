@@ -1,6 +1,6 @@
 package com.github.sachil.uplayer.upnp.dms;
 
-import com.github.sachil.uplayer.UplayerUnity;
+import com.github.sachil.uplayer.Utils;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class ContentTree {
 	protected static ContentNode createRootNode() {
 		Container rootContainer = new Container();
 		rootContainer.setId(UpnpUnity.CONTENT_ROOT_ID);
-		rootContainer.setTitle(UplayerUnity.APP_NAME);
+		rootContainer.setTitle(Utils.APP_NAME);
 		rootContainer.setCreator(UpnpUnity.MANUFACTURER);
 		rootContainer.setSearchable(true);
 		rootContainer.setRestricted(true);

@@ -1,6 +1,6 @@
 package com.github.sachil.uplayer.player;
 
-import com.github.sachil.uplayer.UplayerUnity.MEDIA_TYPE;
+import com.github.sachil.uplayer.Utils.MEDIA_TYPE;
 import com.github.sachil.uplayer.upnp.dmr.AvtransportService;
 
 public class PlayerBuilder {
