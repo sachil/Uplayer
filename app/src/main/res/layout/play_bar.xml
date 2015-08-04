@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout
+    android:id="@+id/playbar_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="?attr/colorPrimary"
-    android:fitsSystemWindows="true"
-    android:id="@+id/playbar_layout"
-    android:clickable="true">
+    android:clickable="true"
+    android:fitsSystemWindows="true">
+
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/playbar_album"
@@ -17,27 +19,40 @@
         android:layout_marginLeft="16dp"
         android:background="?attr/selectableItemBackground"
         app:actualImageScaleType="centerCrop"
-        app:roundAsCircle="true"
         app:placeholderImage="@drawable/ic_launcher"
-        app:placeholderImageScaleType="centerCrop"/>
+        app:placeholderImageScaleType="centerCrop"
+        app:roundAsCircle="true"/>
 
-    <ImageView
+
+    <net.steamcrafted.materialiconlib.MaterialIconView
         android:id="@+id/playbar_playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
-        android:src="@drawable/ic_action_list"/>
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:scaleType="center"
+        app:materialIcon="format_list_bulleted"
+        app:materialIconColor="@color/white"
+        app:materialIconSize="32dp"
+        />
 
-    <ImageView
+    <net.steamcrafted.materialiconlib.MaterialIconView
         android:id="@+id/playbar_playpause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
         android:layout_toLeftOf="@id/playbar_playlist"
-        android:src="@drawable/ic_action_playback_play"/>
+        android:background="?attr/selectableItemBackground"
+        android:padding="12dp"
+        android:scaleType="center"
+        app:materialIcon="play"
+        app:materialIconColor="@color/white"
+        app:materialIconSize="32dp"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"

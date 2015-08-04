@@ -86,13 +86,8 @@ public class XMLToMetadataParser {
 						metadata.setDuration(duration);
 					}
 				} catch (XmlPullParserException e) {
-					// TODO Auto-generated catch block
-					Log.e(LOG_TAG, "Set xml parser input sourse failed!");
 					e.printStackTrace();
-
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					Log.e(LOG_TAG, "Parse the xml string failed!");
 					e.printStackTrace();
 				}
 			}

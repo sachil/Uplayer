@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/ic_nav_header"
-        app:layout_heightPercent="40%" />
+        app:layout_heightPercent="40%"/>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -32,7 +33,7 @@
                 android:text="@string/title_renderer"
                 android:textColor="@color/grey_600"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <com.github.sachil.uplayer.ui.content.PatchedExpandableListView
                 android:id="@+id/nav_renderer"
@@ -40,13 +41,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
-                android:groupIndicator="@null" />
+                android:groupIndicator="@null"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_marginTop="16dp"
-                android:background="@color/grey_400" />
+                android:background="@color/grey_400"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -57,7 +58,7 @@
                 android:text="@string/title_library"
                 android:textColor="@color/grey_600"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <com.github.sachil.uplayer.ui.content.PatchedExpandableListView
                 android:id="@+id/nav_library"
@@ -65,13 +66,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
-                android:groupIndicator="@null" />
+                android:groupIndicator="@null"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_marginTop="16dp"
-                android:background="@color/grey_400" />
+                android:background="@color/grey_400"/>
 
 
             <TextView
@@ -83,7 +84,7 @@
                 android:text="@string/title_media"
                 android:textColor="@color/grey_600"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <com.github.sachil.uplayer.ui.content.PatchedExpandableListView
                 android:id="@+id/nav_media"
@@ -91,13 +92,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
-                android:groupIndicator="@null" />
+                android:groupIndicator="@null"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_marginTop="16dp"
-                android:background="@color/grey_400" />
+                android:background="@color/grey_400"/>
 
 
             <RelativeLayout
@@ -107,12 +108,15 @@
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true">
 
-                <ImageView
+
+                <net.steamcrafted.materialiconlib.MaterialIconView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
-                    android:src="@drawable/ic_action_settings" />
+                    app:materialIcon="settings"
+                    app:materialIconColor="@color/grey_600"
+                    />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -121,13 +125,13 @@
                     android:layout_marginLeft="72dp"
                     android:text="@string/action_settings"
                     android:textColor="@color/grey_600"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="@color/grey_400" />
+                android:background="@color/grey_400"/>
 
             <RelativeLayout
                 android:id="@+id/nav_exit"
@@ -137,12 +141,14 @@
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true">
 
-                <ImageView
+                <net.steamcrafted.materialiconlib.MaterialIconView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
-                    android:src="@drawable/ic_action_exit" />
+                    app:materialIcon="logout"
+                    app:materialIconColor="@color/grey_600"
+                    />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -151,7 +157,7 @@
                     android:layout_marginLeft="72dp"
                     android:text="@string/action_exit"
                     android:textColor="@color/grey_600"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
             </RelativeLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

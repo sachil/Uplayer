@@ -3,6 +3,9 @@ package com.github.sachil.uplayer.ui;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.steamcrafted.materialiconlib.MaterialDrawableBuilder.IconValue;
+import net.steamcrafted.materialiconlib.MaterialIconView;
+
 import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.support.model.PlayMode;
 import org.fourthline.cling.support.model.PositionInfo;
@@ -19,7 +22,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -49,11 +51,12 @@ public class PlayerActivity extends AppCompatActivity
 	private TextView mCurrentTime = null;
 	private TextView mTotalTime = null;
 	private SeekBar mSeekBar = null;
-	private ImageView mModeButton = null;
-	private ImageView mPrevButton = null;
-	private ImageView mPlayPauseButton = null;
-	private ImageView mNextButton = null;
-	private ImageView mListButton = null;
+	private MaterialIconView mHomeButton = null;
+	private MaterialIconView mModeButton = null;
+	private MaterialIconView mPrevButton = null;
+	private MaterialIconView mPlayPauseButton = null;
+	private MaterialIconView mNextButton = null;
+	private MaterialIconView mListButton = null;
 
 	private Timer mPositionTimer = null;
 	private TimerTask mPositionTask = null;
@@ -118,6 +121,9 @@ public class PlayerActivity extends AppCompatActivity
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
+		case R.id.player_home:
+			finish();
+			break;
 		case R.id.player_model:
 
 			break;
@@ -168,8 +174,7 @@ public class PlayerActivity extends AppCompatActivity
 			TransportState state = metadata.getState();
 			mState = state;
 			if (state == TransportState.PLAYING) {
-				mPlayPauseButton
-						.setImageResource(R.drawable.ic_action_playback_pause);
+				mPlayPauseButton.setIcon(IconValue.PAUSE);
 				mTitle.setText(metadata.getTitle());
 				mArtist.setText(metadata.getCreator());
 				mAlbum.setText(metadata.getAlbum());
@@ -192,14 +197,11 @@ public class PlayerActivity extends AppCompatActivity
 				}
 				PlayMode mode = metadata.getPlayMode();
 				if (mode == PlayMode.NORMAL)
-					mModeButton.setImageResource(
-							R.drawable.ic_action_playback_repeat);
+					mModeButton.setIcon(IconValue.REPEAT);
 				else if (mode == PlayMode.REPEAT_ONE)
-					mModeButton.setImageResource(
-							R.drawable.ic_action_playback_repeat_1);
+					mModeButton.setIcon(IconValue.REPEAT_ONCE);
 				else if (mode == PlayMode.SHUFFLE)
-					mModeButton.setImageResource(
-							R.drawable.ic_action_playback_schuffle);
+					mModeButton.setIcon(IconValue.SHUFFLE);
 
 				if (metadata.getAlbumArt() != null) {
 					mThumb.setController(Fresco.newDraweeControllerBuilder()
@@ -235,8 +237,7 @@ public class PlayerActivity extends AppCompatActivity
 							.setUri(Uri.parse(metadata.getAlbumArt())).build());
 				}
 			} else {
-				mPlayPauseButton
-						.setImageResource(R.drawable.ic_action_playback_play);
+				mPlayPauseButton.setIcon(IconValue.PLAY);
 
 				// transportState不是PLAYING状态时,停止获取当前播放的位置信息。
 
@@ -301,15 +302,18 @@ public class PlayerActivity extends AppCompatActivity
 					}
 				});
 
-		mModeButton = (ImageView) findViewById(R.id.player_model);
+		mHomeButton = (MaterialIconView) findViewById(R.id.player_home);
+		mHomeButton.setOnClickListener(this);
+		mModeButton = (MaterialIconView) findViewById(R.id.player_model);
 		mModeButton.setOnClickListener(this);
-		mPrevButton = (ImageView) findViewById(R.id.player_prev);
+		mPrevButton = (MaterialIconView) findViewById(R.id.player_prev);
 		mPrevButton.setOnClickListener(this);
-		mPlayPauseButton = (ImageView) findViewById(R.id.player_play_pause);
+		mPlayPauseButton = (MaterialIconView) findViewById(
+				R.id.player_play_pause);
 		mPlayPauseButton.setOnClickListener(this);
-		mNextButton = (ImageView) findViewById(R.id.player_next);
+		mNextButton = (MaterialIconView) findViewById(R.id.player_next);
 		mNextButton.setOnClickListener(this);
-		mListButton = (ImageView) findViewById(R.id.player_playlist);
+		mListButton = (MaterialIconView) findViewById(R.id.player_playlist);
 		mListButton.setOnClickListener(this);
 	}
 
@@ -340,5 +344,4 @@ public class PlayerActivity extends AppCompatActivity
 		});
 		thread.start();
 	}
-
 }
