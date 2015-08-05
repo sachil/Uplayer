@@ -7,8 +7,6 @@ import org.fourthline.cling.support.model.item.Item;
 /**
  * ContentNode是容器(Container)与内容(Item)的一个抽象，其目的是便于将
  * 容器与内容挂载到ContentTree上。
- * 
- * @author 20001962
  *
  */
 public class ContentNode {
@@ -49,7 +47,7 @@ public class ContentNode {
 
 	public String getPath() {
 
-		if (mIsItem == true && mPath != null)
+		if (mIsItem && mPath != null)
 			return mPath;
 		else
 			return null;

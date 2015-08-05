@@ -13,7 +13,6 @@ import android.util.Xml;
 
 public class MetaDataToXMLGenerator {
 
-	@SuppressWarnings("unused")
 	private static final String LOG_TAG = MetaDataToXMLGenerator.class.getSimpleName();
 	private static final String NAMESPACE_DIDL_LITE = "urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/";
 	private static final String NAMESPACE_UPNP = "urn:schemas-upnp-org:metadata-1-0/upnp/";
@@ -62,9 +61,9 @@ public class MetaDataToXMLGenerator {
 				serializer.startTag(NAMESPACE_UPNP, "album");
 				serializer.text(musicTrack.getAlbum());
 				serializer.endTag(NAMESPACE_UPNP, "album");
-				String albumArtUri = null;
+				String albumArtUri;
 				if (item.getFirstProperty(DIDLObject.Property.UPNP.ALBUM_ART_URI.class) != null) {
-					albumArtUri = ((URI) item
+					albumArtUri = (item
 							.getFirstPropertyValue(DIDLObject.Property.UPNP.ALBUM_ART_URI.class))
 							.toString();
 					serializer.startTag(NAMESPACE_UPNP, "albumArtURI");
@@ -87,13 +86,10 @@ public class MetaDataToXMLGenerator {
 			result = writer.toString();
 
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return result;

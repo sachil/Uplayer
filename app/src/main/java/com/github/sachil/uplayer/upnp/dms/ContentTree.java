@@ -11,8 +11,6 @@ import org.fourthline.cling.support.model.container.Container;
 /**
  * ContentTree用于展示和管理dms上的目录结构以及具体内容，ContentTree至少包含一个id号为0的
  * 容器(Container)，它是ContentTree的根节点，所有的目录和具体内容都需要挂载在该根节点下。
- * 
- * @author 20001962
  *
  */
 public class ContentTree {
@@ -24,8 +22,8 @@ public class ContentTree {
 	 * 不希望重新生成本地dms的目录结构(因为它的目录结构是固定的，且这是一项较耗时的工作)，所以
 	 * 只需生成一次并将它保存。而远端dms则需要在切换dms的时候，将数据清空，并重新生成。
 	 */
-	private static HashMap<String, ContentNode> mHashMap = new HashMap<String, ContentNode>();
-	private static HashMap<String, ContentNode> mLocalHashMap = new HashMap<String, ContentNode>();
+	private static HashMap<String, ContentNode> mHashMap = new HashMap<>();
+	private static HashMap<String, ContentNode> mLocalHashMap = new HashMap<>();
 	private static ContentNode mRemoteRootContentNode = createRootNode();
 	private static ContentNode mLocalRootContentNode = createRootNode();
 
@@ -38,11 +36,8 @@ public class ContentTree {
 		rootContainer.setRestricted(true);
 		rootContainer.setChildCount(0);
 		rootContainer.setWriteStatus(WriteStatus.NOT_WRITABLE);
-		ContentNode rootNode = new ContentNode(UpnpUnity.CONTENT_ROOT_ID,
+		return new ContentNode(UpnpUnity.CONTENT_ROOT_ID,
 				rootContainer);
-
-		return rootNode;
-
 	}
 
 	public static void addRootContentNode() {
@@ -75,17 +70,10 @@ public class ContentTree {
 	}
 
 	public static boolean hasContentNode(String id, boolean isLocal) {
-		if (isLocal) {
-			if (mLocalHashMap.containsKey(id))
-				return true;
-			else
-				return false;
-		} else {
-			if (mHashMap.containsKey(id))
-				return true;
-			else
-				return false;
-		}
+		if (isLocal)
+			return mLocalHashMap.containsKey(id);
+		else
+			return mHashMap.containsKey(id);
 	}
 
 	public static void addContentNode(String id, ContentNode node,

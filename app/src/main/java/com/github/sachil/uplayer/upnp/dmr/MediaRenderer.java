@@ -35,11 +35,10 @@ import com.github.sachil.uplayer.upnp.UpnpUnity;
  * 如：setUri、play、stop等。其次是RendererControlService，它主要实现对dmr硬件环境的调节与
  * 获取，如：设置静音setmute、设置音量setVolume等。ConnectionManagerService，主要管理连接，
  * 在使用http-get方式时，该service显得并不是那么重要。
- * @author 20001962
  *
  */
 public class MediaRenderer {
-	@SuppressWarnings("unused")
+	
 	private static final String LOG_TAG = MediaRenderer.class.getSimpleName();
 	private static final int TIME_OUT = 2000;
 	private LocalDevice mLocalDevice = null;
@@ -62,7 +61,7 @@ public class MediaRenderer {
 		LocalServiceBinder binder = new AnnotationLocalServiceBinder();
 		LocalService<ConnectionService> connectionManagerService = binder
 				.read(ConnectionService.class);
-		ServiceManager<ConnectionService> connectionManager = new DefaultServiceManager<ConnectionService>(
+		ServiceManager<ConnectionService> connectionManager = new DefaultServiceManager<>(
 				connectionManagerService, ConnectionService.class);
 		connectionManagerService.setManager(connectionManager);
 
@@ -108,7 +107,6 @@ public class MediaRenderer {
 					new Icon[] { createDefaultDeviceIcon(context) },
 					serviceList);
 		} catch (ValidationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

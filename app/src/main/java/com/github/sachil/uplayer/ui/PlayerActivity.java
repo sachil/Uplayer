@@ -24,12 +24,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.github.sachil.uplayer.R;
+import com.github.sachil.uplayer.ui.message.ErrorMessage;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.Controller;
@@ -143,6 +145,13 @@ public class PlayerActivity extends AppCompatActivity
 
 			break;
 		}
+	}
+
+	public void onEventMainThread(ErrorMessage message) {
+
+		if (message.getId() == ErrorMessage.CONTROL_ERROR)
+			Toast.makeText(this, message.getMessage(), Toast.LENGTH_SHORT)
+					.show();
 	}
 
 	public void onEventMainThread(PlayerMessage message) {

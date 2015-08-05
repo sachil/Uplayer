@@ -65,15 +65,12 @@ public class AvtransportService extends AbstractAVTransportService
 
 	@Override
 	public UnsignedIntegerFourBytes[] getCurrentInstanceIds() {
-		// TODO Auto-generated method stub
 		return new UnsignedIntegerFourBytes[] { getDefaultInstanceID() };
 	}
 
 	@Override
 	protected TransportAction[] getCurrentTransportActions(
 			UnsignedIntegerFourBytes arg0) throws Exception {
-		// TODO Auto-generated method stub
-
 		return mTransportActions;
 	}
 
@@ -85,7 +82,6 @@ public class AvtransportService extends AbstractAVTransportService
 	public DeviceCapabilities getDeviceCapabilities(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
 		return mDeviceCapabilities;
 	}
 
@@ -103,8 +99,6 @@ public class AvtransportService extends AbstractAVTransportService
 	public MediaInfo getMediaInfo(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
-
 		return mMediaInfo;
 	}
 
@@ -121,8 +115,8 @@ public class AvtransportService extends AbstractAVTransportService
 	public PositionInfo getPositionInfo(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
-		PositionInfo positionInfo = null;
+		
+		PositionInfo positionInfo;
 		if (mPlayer == null) {
 			positionInfo = new PositionInfo();
 		} else {
@@ -148,8 +142,6 @@ public class AvtransportService extends AbstractAVTransportService
 	public TransportInfo getTransportInfo(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
 					throws AVTransportException {
-		// TODO Auto-generated method stub0
-
 		/**
 		 * 使用bubbleUpnp测试时，它会一直获取该信息，而使用skifta却并不会如此，
 		 * 难道是我回个dmc的消息有误，导致bubble无法获取想要的信息，而重复获取？ 现在还不太清楚。
@@ -164,8 +156,6 @@ public class AvtransportService extends AbstractAVTransportService
 	public TransportSettings getTransportSettings(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
-
 		return mTransportSettings;
 	}
 
@@ -220,7 +210,6 @@ public class AvtransportService extends AbstractAVTransportService
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		getLastChange().fire(getPropertyChangeSupport());
@@ -232,7 +221,7 @@ public class AvtransportService extends AbstractAVTransportService
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "Speed", stateVariable = "TransportPlaySpeed") String arg1)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
+		
 		Log.e(LOG_TAG, "Start to play!");
 		if (mPlayer != null) {
 			mPlayer.play();
@@ -249,7 +238,7 @@ public class AvtransportService extends AbstractAVTransportService
 	public void pause(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
+		
 		Log.e(LOG_TAG, "Start to pause!");
 		if (mPlayer != null) {
 			mTransportInfo = new TransportInfo(TransportState.PAUSED_PLAYBACK,
@@ -278,7 +267,7 @@ public class AvtransportService extends AbstractAVTransportService
 			@UpnpInputArgument(name = "Unit", stateVariable = "A_ARG_TYPE_SeekMode") String arg1,
 			@UpnpInputArgument(name = "Target", stateVariable = "A_ARG_TYPE_SeekTarget") String arg2)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
+		
 		if (mPlayer != null) {
 			if (!arg1.equalsIgnoreCase(SeekMode.REL_TIME.toString()))
 				throw new AVTransportException(ErrorCode.INVALID_ARGS,
@@ -304,7 +293,7 @@ public class AvtransportService extends AbstractAVTransportService
 	public void stop(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
+		
 		Log.e(LOG_TAG, "Start to stop!");
 		if (mPlayer != null) {
 			mTransportInfo = new TransportInfo(TransportState.STOPPED,
@@ -331,8 +320,6 @@ public class AvtransportService extends AbstractAVTransportService
 	public void previous(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -340,8 +327,6 @@ public class AvtransportService extends AbstractAVTransportService
 	public void next(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -349,8 +334,6 @@ public class AvtransportService extends AbstractAVTransportService
 	public void record(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -360,8 +343,6 @@ public class AvtransportService extends AbstractAVTransportService
 			@UpnpInputArgument(name = "NextURI", stateVariable = "AVTransportURI") String arg1,
 			@UpnpInputArgument(name = "NextURIMetaData", stateVariable = "AVTransportURIMetaData") String arg2)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -370,8 +351,6 @@ public class AvtransportService extends AbstractAVTransportService
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "NewPlayMode", stateVariable = "CurrentPlayMode") String arg1)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -380,8 +359,6 @@ public class AvtransportService extends AbstractAVTransportService
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "NewRecordQualityMode", stateVariable = "CurrentRecordQualityMode") String arg1)
 					throws AVTransportException {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -421,10 +398,10 @@ public class AvtransportService extends AbstractAVTransportService
 				eventType = parser.next();
 			}
 		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		if (itemClass.contains(Utils.AUDIO_PREFIX))
@@ -440,7 +417,7 @@ public class AvtransportService extends AbstractAVTransportService
 	 */
 	@Override
 	public void transportStateChanged(TransportState state) {
-		// TODO Auto-generated method stub
+		
 		Log.e(LOG_TAG, "State has changed:" + state);
 		mTransportInfo = new TransportInfo(state, TransportStatus.OK,
 				DEFAULT_SPEED);

@@ -19,7 +19,6 @@ import com.github.sachil.uplayer.Utils;
 import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 import com.github.sachil.uplayer.upnp.dmc.MetaDataToXMLGenerator;
 
-
 public class PlaylistManager {
 	private static final String LOG_TAG = PlaylistManager.class.getSimpleName();
 	private static final String URL = "url";
@@ -33,10 +32,10 @@ public class PlaylistManager {
 	}
 
 	public static ArrayList<PlaylistItem> listPlaylists(Context context) {
-		ArrayList<PlaylistItem> playlists = new ArrayList<PlaylistItem>();
+		ArrayList<PlaylistItem> playlists = new ArrayList<>();
 		String[] files = context.getFilesDir().list();
-		for (int i = 0; i < files.length; i++)
-			playlists.add(new PlaylistItem(files[i]));
+		for (String file : files)
+			playlists.add(new PlaylistItem(file));
 		return playlists;
 	}
 
@@ -49,11 +48,9 @@ public class PlaylistManager {
 			fos.close();
 			context.sendBroadcast(new Intent(Utils.PLAYLISTS_EDITED));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -70,11 +67,9 @@ public class PlaylistManager {
 			fos.flush();
 			fos.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -83,7 +78,7 @@ public class PlaylistManager {
 
 	public static ArrayList<PlaylistItem> readPlaylist(Context context,
 			String name) {
-		ArrayList<PlaylistItem> playlistItems = new ArrayList<PlaylistItem>();
+		ArrayList<PlaylistItem> playlistItems = new ArrayList<>();
 		try {
 			FileInputStream fis = context.openFileInput(name);
 			// Log.e(LOG_TAG, "" + fis.available());
@@ -93,17 +88,14 @@ public class PlaylistManager {
 			if (buffer.length > 0)
 				mJsonArray = new JSONArray(new String(buffer));
 			for (int i = 0; i < mJsonArray.length(); i++)
-				playlistItems.add(new PlaylistItem(mJsonArray.getJSONObject(i)
-						.getString(URL), mJsonArray.getJSONObject(i).getString(
-						METADATA)));
+				playlistItems.add(new PlaylistItem(
+						mJsonArray.getJSONObject(i).getString(URL),
+						mJsonArray.getJSONObject(i).getString(METADATA)));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return playlistItems;
@@ -130,28 +122,25 @@ public class PlaylistManager {
 
 	public static String toJsonString(List<ContentItem> items) {
 		try {
-			for(int i = 0; i < items.size();i++){
+			for (int i = 0; i < items.size(); i++) {
 				JSONObject object = new JSONObject();
-				object.put(URL, items.get(i).getItem().getFirstResource().getValue());
-				object.put(METADATA,
-						MetaDataToXMLGenerator.metadataToXml(items.get(i).getItem()));
+				object.put(URL,
+						items.get(i).getItem().getFirstResource().getValue());
+				object.put(METADATA, MetaDataToXMLGenerator
+						.metadataToXml(items.get(i).getItem()));
 				mJsonArray.put(object);
 			}
 			Log.e(LOG_TAG, "" + mJsonArray.toString());
 			return mJsonArray.toString();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
 	}
 
 	private static boolean isNameValid(String name) {
-		if (name.length() > 32 || name.length() < 1)
-			return false;
-		if (!name.matches(new String("[A-Za-z0-9\\.\\32\\-_\u4e00-\u9fa5]+")))
-			return false;
-		return true;
+		return !(name.length() > 32 || name.length() < 1) && name
+				.matches(new String("[A-Za-z0-9\\.\\32\\-_\u4e00-\u9fa5]+"));
 	}
 
 	@SuppressWarnings("unused")
@@ -162,7 +151,6 @@ public class PlaylistManager {
 				if (i != index)
 					jsonArray.put(array).get(i);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return jsonArray;

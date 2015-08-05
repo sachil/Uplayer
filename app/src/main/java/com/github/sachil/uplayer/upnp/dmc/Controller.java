@@ -34,6 +34,7 @@ import org.fourthline.cling.model.gena.CancelReason;
 
 import android.util.Log;
 
+import com.github.sachil.uplayer.ui.message.ErrorMessage;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.XMLToMetadataParser.Metadata;
@@ -72,8 +73,8 @@ public class Controller {
 		}
 	}
 
-	public static Controller getInstance(){
-		if(mController == null)
+	public static Controller getInstance() {
+		if (mController == null)
 			mController = new Controller();
 		return mController;
 
@@ -99,14 +100,11 @@ public class Controller {
 		SetAVTransportURI callback = new SetAVTransportURI(mAvTransportService,
 				url, metadata) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, "Set play uri failed! the reason is:" + message
-						+ "the response details is:" + response);
-				//Utils.showToast(mContext, message);
+				EventBus.getDefault().post(
+						new ErrorMessage(ErrorMessage.CONTROL_ERROR, message));
 			}
 		};
 		if (mAvTransportService != null)
@@ -117,14 +115,11 @@ public class Controller {
 	public void play() {
 		Play callback = new Play(mAvTransportService) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, "Play failed! the reason is:" + message
-						+ "the response details is:" + response);
-				//Utils.showToast(mContext, message);
+				EventBus.getDefault().post(
+						new ErrorMessage(ErrorMessage.CONTROL_ERROR, message));
 			}
 		};
 		if (mAvTransportService != null)
@@ -134,14 +129,11 @@ public class Controller {
 	public void pause() {
 		Pause callback = new Pause(mAvTransportService) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, "Pause failed! the reason is:" + message
-						+ "the response details is:" + response);
-				//Utils.showToast(mContext, message);
+				EventBus.getDefault().post(
+						new ErrorMessage(ErrorMessage.CONTROL_ERROR, message));
 			}
 		};
 		if (mAvTransportService != null)
@@ -151,14 +143,11 @@ public class Controller {
 	public void stop() {
 		Stop callback = new Stop(mAvTransportService) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, "Stop failed! the reason is:" + message
-						+ "the response details is:" + response);
-				//Utils.showToast(mContext, message);
+				EventBus.getDefault().post(
+						new ErrorMessage(ErrorMessage.CONTROL_ERROR, message));
 			}
 		};
 
@@ -169,21 +158,16 @@ public class Controller {
 	public void getPosition() {
 		GetPositionInfo callback = new GetPositionInfo(mAvTransportService) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, "Get position failed! the reason is:" + message
-						+ "the response details is:" + response);
-				//Utils.showToast(mContext, message);
+				EventBus.getDefault().post(
+						new ErrorMessage(ErrorMessage.CONTROL_ERROR, message));
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void received(ActionInvocation actionInvocation,
 					PositionInfo positionInfo) {
-				// TODO Auto-generated method stub
 				EventBus.getDefault().post(new PlayerMessage(
 						PlayerMessage.REFRESH_CURRENT_POSITION, positionInfo));
 
@@ -196,14 +180,11 @@ public class Controller {
 	public void seek(SeekMode mode, String target) {
 		Seek callback = new Seek(mAvTransportService, mode, target) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, "Seek failed! the reason is:" + message
-						+ "the response details is:" + response);
-				//Utils.showToast(mContext, message);
+				EventBus.getDefault().post(
+						new ErrorMessage(ErrorMessage.CONTROL_ERROR, message));
 			}
 		};
 		if (mAvTransportService != null)
@@ -213,21 +194,16 @@ public class Controller {
 	public boolean getMute() {
 		GetMute callback = new GetMute(mRendererControlService) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, "GetMute failed! the reason is:" + message
-						+ "the response details is:" + response);
-				//Utils.showToast(mContext, message);
+				EventBus.getDefault().post(
+						new ErrorMessage(ErrorMessage.CONTROL_ERROR, message));
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void received(ActionInvocation actionInvocation,
 					boolean currentMute) {
-				// TODO Auto-generated method stub
 				mIsMute = currentMute;
 			}
 		};
@@ -240,14 +216,11 @@ public class Controller {
 	public void setMute(boolean desiredMute) {
 		SetMute callback = new SetMute(mRendererControlService, desiredMute) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, "SetMute failed! the reason is:" + message
-						+ "the response details is:" + response);
-				//Utils.showToast(mContext, message);
+				EventBus.getDefault().post(
+						new ErrorMessage(ErrorMessage.CONTROL_ERROR, message));
 			}
 		};
 		if (mRendererControlService != null)
@@ -257,21 +230,16 @@ public class Controller {
 	public int getVolume() {
 		GetVolume callback = new GetVolume(mRendererControlService) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, "GetVolume failed! the reason is:" + message
-						+ "the response details is:" + response);
-				//Utils.showToast(mContext, message);
+				EventBus.getDefault().post(
+						new ErrorMessage(ErrorMessage.CONTROL_ERROR, message));
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void received(ActionInvocation actionInvocation,
 					int currentVolume) {
-				// TODO Auto-generated method stub
 				mCurrentVolume = currentVolume;
 			}
 		};
@@ -284,14 +252,11 @@ public class Controller {
 	public void setVolume(long newVolume) {
 		SetVolume callback = new SetVolume(mRendererControlService, newVolume) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void failure(ActionInvocation actionInvocation,
 					UpnpResponse response, String message) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, "SetVolume failed! the reason is:" + message
-						+ "the response details is:" + response);
-				//Utils.showToast(mContext, message);
+				EventBus.getDefault().post(
+						new ErrorMessage(ErrorMessage.CONTROL_ERROR, message));
 			}
 		};
 		if (mRendererControlService != null)
@@ -317,167 +282,123 @@ public class Controller {
 		mAvSubscriptionCallback = new SubscriptionCallback(mAvTransportService,
 				TIMEOUT) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			protected void failed(GENASubscription subscription,
 					UpnpResponse responseStatus, Exception exception,
 					String defaultMsg) {
-				// TODO Auto-generated method stub
-				Log.e(TAG,
-						"avTransportCallback:Subscribe events failed!The reason is:"
-								+ createDefaultFailureMessage(responseStatus,
-										exception));
-//				Utils.showToast(mContext,
-//						createDefaultFailureMessage(responseStatus, exception));
+				EventBus.getDefault()
+						.post(new ErrorMessage(ErrorMessage.CONTROL_ERROR,
+								createDefaultFailureMessage(responseStatus,
+										exception)));
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			protected void eventsMissed(GENASubscription subscription,
 					int numberOfMissedEvents) {
-				// TODO Auto-generated method stub
-				Log.e(TAG,
-						"avTransportCallback:Missed events,the number is:"
-								+ numberOfMissedEvents);
+				EventBus.getDefault().post(new ErrorMessage(
+						ErrorMessage.CONTROL_ERROR, "Transport event missed."));
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			protected void eventReceived(GENASubscription subscription) {
-				// TODO Auto-generated method stub
 				try {
 					LastChange lastChange = new LastChange(
 							new AVTransportLastChangeParser(),
 							subscription.getCurrentValues().get(LAST_CHANGE)
 									.toString());
-					if (lastChange != null) {
+					AVTransportURIMetaData avTransportURIMetaData = lastChange
+							.getEventedValue(DEFAULT_INSTANCE,
+									AVTransportVariable.AVTransportURIMetaData.class);
+					TransportState transportState = lastChange.getEventedValue(
+							DEFAULT_INSTANCE,
+							AVTransportVariable.TransportState.class);
+					CurrentPlayMode currentPlayMode = lastChange
+							.getEventedValue(DEFAULT_INSTANCE,
+									AVTransportVariable.CurrentPlayMode.class);
+					if (avTransportURIMetaData != null
+							&& avTransportURIMetaData.getValue() != null) {
+						String metadata = avTransportURIMetaData.getValue();
+						mXmlToMetadataparser.parseXmlToMetadata(mMetadata,
+								metadata);
 
-						AVTransportURIMetaData avTransportURIMetaData = lastChange
-								.getEventedValue(DEFAULT_INSTANCE,
-										AVTransportVariable.AVTransportURIMetaData.class);
-						TransportState transportState = lastChange
-								.getEventedValue(DEFAULT_INSTANCE,
-										AVTransportVariable.TransportState.class);
-						CurrentPlayMode currentPlayMode = lastChange
-								.getEventedValue(DEFAULT_INSTANCE,
-										AVTransportVariable.CurrentPlayMode.class);
-						if (avTransportURIMetaData != null
-								&& avTransportURIMetaData.getValue() != null) {
-							String metadata = avTransportURIMetaData.getValue();
-							mXmlToMetadataparser.parseXmlToMetadata(mMetadata,
-									metadata);
-
-						}
-
-						if (transportState != null) {
-							mMetadata.setState(transportState.getValue());
-						}
-
-						if (currentPlayMode != null) {
-							mMetadata.setPlayMode(currentPlayMode.getValue());
-						}
-
-						EventBus.getDefault().post(new PlayerMessage(
-								PlayerMessage.REFRESH_METADATA, mMetadata));
 					}
+
+					if (transportState != null) {
+						mMetadata.setState(transportState.getValue());
+					}
+
+					if (currentPlayMode != null) {
+						mMetadata.setPlayMode(currentPlayMode.getValue());
+					}
+
+					EventBus.getDefault().post(new PlayerMessage(
+							PlayerMessage.REFRESH_METADATA, mMetadata));
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			protected void established(GENASubscription subscription) {
-				// TODO Auto-generated method stub
-				Log.i(TAG, "avTransportCallback:Established,the id is:"
-						+ subscription.getSubscriptionId());
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			protected void ended(GENASubscription subscription,
 					CancelReason reason, UpnpResponse responseStatus) {
-				// TODO Auto-generated method stub
-				Log.e(TAG,
-						"avTransportCallback:Subscribe events is ended!");
 			}
 		};
 
 		mRenSubscriptionCallback = new SubscriptionCallback(
 				mRendererControlService, TIMEOUT) {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			protected void failed(GENASubscription subscription,
 					UpnpResponse responseStatus, Exception exception,
 					String defaultMsg) {
-				// TODO Auto-generated method stub
-				Log.e(TAG,
-						"rendererControlCallback:Subscribe events failed!The reason is:"
-								+ createDefaultFailureMessage(responseStatus,
-										exception));
-//				Utils.showToast(mContext,
-//						createDefaultFailureMessage(responseStatus, exception));
+				EventBus.getDefault()
+						.post(new ErrorMessage(ErrorMessage.CONTROL_ERROR,
+								createDefaultFailureMessage(responseStatus,
+										exception)));
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			protected void eventsMissed(GENASubscription subscription,
 					int numberOfMissedEvents) {
-				// TODO Auto-generated method stub
-				Log.e(TAG,
-						"rendererControlCallback:Missed events,the number is:"
-								+ numberOfMissedEvents);
+				EventBus.getDefault().post(new ErrorMessage(
+						ErrorMessage.CONTROL_ERROR, "Control event missed."));
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			protected void eventReceived(GENASubscription subscription) {
-				// TODO Auto-generated method stub
 				try {
 					LastChange lastChange = new LastChange(
 							new RenderingControlLastChangeParser(),
 							subscription.getCurrentValues().get(LAST_CHANGE)
 									.toString());
-					if (lastChange != null) {
+					Mute mute = lastChange.getEventedValue(DEFAULT_INSTANCE,
+							RenderingControlVariable.Mute.class);
+					Volume volume = lastChange.getEventedValue(DEFAULT_INSTANCE,
+							RenderingControlVariable.Volume.class);
+					if (mute != null)
+						mMetadata.setMute(mute.getValue().getMute());
 
-						Mute mute = lastChange.getEventedValue(DEFAULT_INSTANCE,
-								RenderingControlVariable.Mute.class);
-						Volume volume = lastChange.getEventedValue(
-								DEFAULT_INSTANCE,
-								RenderingControlVariable.Volume.class);
-						if (mute != null)
-							mMetadata.setMute(mute.getValue().getMute());
-
-						if (volume != null)
-							mMetadata.setVolume(volume.getValue().getVolume());
-						EventBus.getDefault().post(new PlayerMessage(
-								PlayerMessage.REFRESH_VOLUME, mMetadata));
-
-					}
+					if (volume != null)
+						mMetadata.setVolume(volume.getValue().getVolume());
+					EventBus.getDefault().post(new PlayerMessage(
+							PlayerMessage.REFRESH_VOLUME, mMetadata));
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			protected void established(GENASubscription subscription) {
-				// TODO Auto-generated method stub
-				Log.i(TAG, "rendererControlCallback:Established,the id is:"
-						+ subscription.getSubscriptionId());
 			}
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			protected void ended(GENASubscription subscription,
 					CancelReason reason, UpnpResponse responseStatus) {
-				// TODO Auto-generated method stub
-				Log.e(TAG,
-						"rendererControlCallback:Subscribe events is ended!");
 			}
 		};
 

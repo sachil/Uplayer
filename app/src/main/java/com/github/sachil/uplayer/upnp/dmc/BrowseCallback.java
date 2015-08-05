@@ -35,7 +35,7 @@ public class BrowseCallback extends Browse {
 
 		super(service, container.getId(), BrowseFlag.DIRECT_CHILDREN, "*", 0,
 				null, new SortCriterion(true, "dc:title"));
-		mIsRootNode = container.getParentID() == null ? true : false;
+		mIsRootNode = container.getParentID() == null;
 		mContentList = new ArrayList<>();
 		mService = service;
 		mIsLocal = isLocal;
@@ -44,7 +44,6 @@ public class BrowseCallback extends Browse {
 	@Override
 	public void received(ActionInvocation actionInvocation,
 			final DIDLContent didl) {
-		// TODO Auto-generated method stub
 		mContentList.clear();
 		for (Container container : didl.getContainers()) {
 			mContentList.add(new ContentItem(container, mService));
@@ -64,14 +63,10 @@ public class BrowseCallback extends Browse {
 
 	@Override
 	public void updateStatus(Status arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void failure(ActionInvocation arg0, UpnpResponse arg1, String arg2) {
-		// TODO Auto-generated method stub
-
 	}
 
 	private void sortList() {
@@ -86,7 +81,7 @@ public class BrowseCallback extends Browse {
 				else if (!item1.isContainer() && !item2.isContainer())
 					return item1.getItem().getTitle()
 							.compareToIgnoreCase(item2.getItem().getTitle());
-				else if (item1.isContainer() && !item2.isContainer())
+				else if (item1.isContainer())
 					return -1;
 				else
 					return 1;

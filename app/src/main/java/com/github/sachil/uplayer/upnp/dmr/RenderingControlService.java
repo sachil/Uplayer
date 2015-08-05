@@ -32,34 +32,34 @@ public class RenderingControlService extends AbstractAudioRenderingControl {
 
 	@Override
 	public UnsignedIntegerFourBytes[] getCurrentInstanceIds() {
-		// TODO Auto-generated method stub
-		return new UnsignedIntegerFourBytes[] { new UnsignedIntegerFourBytes(0) };
+
+		return new UnsignedIntegerFourBytes[] {
+				new UnsignedIntegerFourBytes(0) };
 	}
 
 	@Override
 	protected Channel[] getCurrentChannels() {
-		// TODO Auto-generated method stub
+
 		return new Channel[] { Channel.Master };
 	}
 
 	@Override
-	@UpnpAction(out = @UpnpOutputArgument(name = "CurrentMute", stateVariable = "Mute"))
+	@UpnpAction(out = @UpnpOutputArgument(name = "CurrentMute", stateVariable = "Mute") )
 	public boolean getMute(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "Channel") String arg1)
-			throws RenderingControlException {
-		// TODO Auto-generated method stub
-		return mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) > 0 ? false
-				: true;
+					throws RenderingControlException {
+
+		return mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) <= 0;
 	}
 
 	@Override
-	@UpnpAction(out = @UpnpOutputArgument(name = "CurrentVolume", stateVariable = "Volume"))
+	@UpnpAction(out = @UpnpOutputArgument(name = "CurrentVolume", stateVariable = "Volume") )
 	public UnsignedIntegerTwoBytes getVolume(
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "Channel") String arg1)
-			throws RenderingControlException {
-		// TODO Auto-generated method stub
+					throws RenderingControlException {
+
 		return new UnsignedIntegerTwoBytes(
 				mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
 	}
@@ -70,14 +70,13 @@ public class RenderingControlService extends AbstractAudioRenderingControl {
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "Channel") String arg1,
 			@UpnpInputArgument(name = "DesiredMute", stateVariable = "Mute") boolean arg2)
-			throws RenderingControlException {
-		// TODO Auto-generated method stub
+					throws RenderingControlException {
+
 		Log.e(LOG_TAG, "Start to set mute");
 		mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, arg2);
-		getLastChange().setEventedValue(
-				getDefaultInstanceID(),
-				new RenderingControlVariable.Mute(new ChannelMute(
-						Channel.Master, arg2)));
+		getLastChange().setEventedValue(getDefaultInstanceID(),
+				new RenderingControlVariable.Mute(
+						new ChannelMute(Channel.Master, arg2)));
 		getLastChange().fire(getPropertyChangeSupport());
 	}
 
@@ -87,8 +86,8 @@ public class RenderingControlService extends AbstractAudioRenderingControl {
 			@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes arg0,
 			@UpnpInputArgument(name = "Channel") String arg1,
 			@UpnpInputArgument(name = "DesiredVolume", stateVariable = "Volume") UnsignedIntegerTwoBytes arg2)
-			throws RenderingControlException {
-		// TODO Auto-generated method stub
+					throws RenderingControlException {
+
 		int volume = arg2.getValue().intValue();
 		int maxVolume = mAudioManager
 				.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -98,13 +97,12 @@ public class RenderingControlService extends AbstractAudioRenderingControl {
 					AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
 			if (volume > 0)
 				mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
-			boolean isMute = volume == 0 ? true : false;
-			getLastChange().setEventedValue(
-					getDefaultInstanceID(),
-					new RenderingControlVariable.Volume(new ChannelVolume(
-							Channel.Master, volume)),
-					new RenderingControlVariable.Mute(new ChannelMute(
-							Channel.Master, isMute)));
+			boolean isMute = volume == 0;
+			getLastChange().setEventedValue(getDefaultInstanceID(),
+					new RenderingControlVariable.Volume(
+							new ChannelVolume(Channel.Master, volume)),
+					new RenderingControlVariable.Mute(
+							new ChannelMute(Channel.Master, isMute)));
 			getLastChange().fire(getPropertyChangeSupport());
 		} else
 			throw new RenderingControlException(ErrorCode.INVALID_ARGS,

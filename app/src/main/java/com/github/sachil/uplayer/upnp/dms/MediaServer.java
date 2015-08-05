@@ -36,8 +36,7 @@ public class MediaServer {
 	private static InetAddress mLocalAddress = null;
 	private HttpServer mHttpServer = null;
 	private LocalDevice mLocalDevice = null;
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	
 	public MediaServer(Context context, InetAddress address) {
 		DeviceType type = new UDADeviceType(UpnpUnity.DMS, UpnpUnity.VERSION);
 		DeviceDetails details = new DeviceDetails(
@@ -48,7 +47,7 @@ public class MediaServer {
 						UpnpUnity.DMS_MODEL_DESCRIPTION, UpnpUnity.MODEL_NUMBER));
 		LocalService<ContentDirectoryService> directoryService = new AnnotationLocalServiceBinder()
 				.read(ContentDirectoryService.class);
-		ServiceManager<ContentDirectoryService> directorManager = new DefaultServiceManager<ContentDirectoryService>(
+		ServiceManager<ContentDirectoryService> directorManager = new DefaultServiceManager<>(
 				directoryService, ContentDirectoryService.class);
 		directoryService.setManager(directorManager);
 
@@ -60,7 +59,7 @@ public class MediaServer {
 			@Override
 			protected ConnectionManagerService createServiceInstance()
 					throws Exception {
-				// TODO Auto-generated method stub
+				
 				return new ConnectionManagerService(createProtocolInfos(), null);
 			}
 
@@ -80,21 +79,20 @@ public class MediaServer {
 
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
+					
 					try {
 
 						mHttpServer = new HttpServer(UpnpUnity.PORT);
-						if (mHttpServer != null)
-							mHttpServer.start();
+						mHttpServer.start();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
+						
 						e.printStackTrace();
 					}
 				}
 			});
 			thread.start();
 		} catch (ValidationException e) {
-			// TODO Auto-generated catch block
+			
 			Log.e(LOG_TAG, "Create local device failed!");
 			e.printStackTrace();
 		}

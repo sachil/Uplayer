@@ -58,22 +58,17 @@ public class HttpServer extends NanoHTTPD {
 	public HttpServer(int port) {
 		super(port);
 		mRootDir = new File("/");
-		// TODO Auto-generated constructor stub
 	}
 
 	public HttpServer(String hostname, int port) {
 		super(hostname, port);
 		mRootDir = new File("/");
-		// TODO Auto-generated constructor stub
-
 	}
 
 	@Override
 	public Response serve(String uri, Method method,
 			Map<String, String> header, Map<String, String> parms,
 			Map<String, String> files) {
-		// TODO Auto-generated method stub
-
 		// Map uri to acture file in ContentTree
 		Log.i(LOG_TAG, "uri:" + uri + "method:" + method);
 		for (String key : header.keySet())
@@ -90,7 +85,7 @@ public class HttpServer extends NanoHTTPD {
 
 			if (ContentTree.hasContentNode(itemId, true)) {
 				ContentNode node = ContentTree.getContentNode(itemId, true);
-				if (node.isItem()) {
+				if (node != null && node.isItem()) {
 					newUri = node.getPath();
 				}
 			}
@@ -99,7 +94,6 @@ public class HttpServer extends NanoHTTPD {
 				uri = newUri;
 			return serveFile(uri, header, mRootDir);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}

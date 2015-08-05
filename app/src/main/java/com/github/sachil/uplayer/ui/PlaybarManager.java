@@ -10,10 +10,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
+import com.github.sachil.uplayer.ui.message.ErrorMessage;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.Controller;
@@ -59,6 +61,13 @@ public class PlaybarManager implements View.OnClickListener {
 			playItem();
 			break;
 		}
+	}
+
+	public void onEventMainThread(ErrorMessage message) {
+
+		if (message.getId() == ErrorMessage.CONTROL_ERROR)
+			Toast.makeText(mContext, message.getMessage(), Toast.LENGTH_SHORT)
+					.show();
 	}
 
 	public void onEventMainThread(PlayerMessage message) {

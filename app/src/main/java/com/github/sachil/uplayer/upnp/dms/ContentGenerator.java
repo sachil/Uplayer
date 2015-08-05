@@ -32,8 +32,6 @@ import com.github.sachil.uplayer.upnp.UpnpUnity;
  * music -- Artist	按照歌手名称分类
  * 		 \
  * 			Track	将所有music放在该目录下
- * 
- * @author 20001962
  *
  */
 public class ContentGenerator {
@@ -58,7 +56,7 @@ public class ContentGenerator {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
+				
 				if (mIsprepared)
 					return;
 				UpnpUnity.generateContainer(UpnpUnity.CONTENT_AUDIO_ID,
@@ -237,7 +235,6 @@ public class ContentGenerator {
 			album_art = cur.getString(0);
 		}
 		cur.close();
-		cur = null;
 		return album_art;
 	}
 }

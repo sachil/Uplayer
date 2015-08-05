@@ -6,17 +6,13 @@ import org.fourthline.cling.support.model.DIDLObject;
 import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.item.Item;
 
-
-
 public class ContentItem {
 
-	@SuppressWarnings("rawtypes")
 	private Service<Device, Service> mService = null;
 	private DIDLObject mObject = null;
 	private String mId = null;
 	private boolean mIsContainer = false;
 
-	@SuppressWarnings("rawtypes")
 	public ContentItem(Container container, Service<Device, Service> service) {
 		mObject = container;
 		mService = service;
@@ -25,7 +21,6 @@ public class ContentItem {
 		mIsContainer = true;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public ContentItem(Item item, Service<Device, Service> service) {
 		mObject = item;
 		mService = service;
@@ -35,20 +30,19 @@ public class ContentItem {
 	}
 
 	public Container getContainer() {
-		if (mIsContainer == true)
+		if (mIsContainer)
 			return (Container) mObject;
 		else
 			return null;
 	}
 
 	public Item getItem() {
-		if (mIsContainer == false)
+		if (!mIsContainer)
 			return (Item) mObject;
 		else
 			return null;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public Service<Device, Service> getService() {
 
 		return mService;
@@ -70,13 +64,8 @@ public class ContentItem {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-
 		ContentItem that = (ContentItem) o;
-
-		if (!mId.equals(that.mId))
-			return false;
-		else
-			return true;
+		return mId.equals(that.mId);
 	}
 
 	@Override

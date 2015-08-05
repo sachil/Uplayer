@@ -24,7 +24,7 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
 	public BrowseResult browse(String objectId, BrowseFlag browseFlag,
 			String filter, long firstResult, long maxResult,
 			SortCriterion[] sortCriterion) throws ContentDirectoryException {
-		// TODO Auto-generated method stub
+		
 		try {
 			DIDLContent content = new DIDLContent();
 			ContentNode node = ContentTree.getContentNode(objectId, true);
@@ -60,18 +60,17 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			Log.e(LOG_TAG, "Generate browse result failed!");
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	@UpnpAction(out = @UpnpOutputArgument(name = "SearchCaps"))
 	public CSV<String> getSearchCapabilities() {
-		// TODO Auto-generated method stub
+		
 		CSV<String> capabilities = new CSV<String>() {
 		};
 		capabilities.add("dc:title");
@@ -84,7 +83,7 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
 	@Override
 	@UpnpAction(out = @UpnpOutputArgument(name = "SortCaps"))
 	public CSV<String> getSortCapabilities() {
-		// TODO Auto-generated method stub
+		
 		return super.getSortCapabilities();
 	}
 
@@ -92,7 +91,7 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
 	public BrowseResult search(String containerId, String searchCriteria,
 			String filter, long firstResult, long maxResults,
 			SortCriterion[] orderBy) throws ContentDirectoryException {
-		// TODO Auto-generated method stub
+		
 		Log.e(LOG_TAG, "containerId:" + containerId + ",searchCriteria:"
 				+ searchCriteria + ",filter:" + filter + ",firstResult:"
 				+ firstResult + ",maxResults:" + maxResults + ",orderBy:"
