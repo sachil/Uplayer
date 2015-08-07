@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_main, menu);
-		return true;
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -139,6 +139,35 @@ public class MainActivity extends AppCompatActivity
 
 			mDrawerLayout.openDrawer(GravityCompat.START);
 
+			break;
+
+		case R.id.menu_layout:
+
+			if (mContentManager != null) {
+				if (mContentManager
+						.getLayout() == ContentManager.LAYOUT_TYPE.LIST) {
+					item.setIcon(
+							getResources().getDrawable(R.drawable.menu_grid));
+					EventBus.getDefault()
+							.post(new ActionMessage(R.id.menu_layout, 0,
+									ContentManager.LAYOUT_TYPE.GRID));
+				}
+//				else if (mContentManager
+//						.getLayout() == ContentManager.LAYOUT_TYPE.GRID) {
+//					item.setIcon(getResources()
+//							.getDrawable(R.drawable.menu_staggered_grid));
+//					EventBus.getDefault()
+//							.post(new ActionMessage(R.id.menu_layout, 0,
+//									ContentManager.LAYOUT_TYPE.STAGGERED_GRID));
+//				}
+				else {
+					item.setIcon(
+							getResources().getDrawable(R.drawable.menu_list));
+					EventBus.getDefault()
+							.post(new ActionMessage(R.id.menu_layout, 0,
+									ContentManager.LAYOUT_TYPE.LIST));
+				}
+			}
 			break;
 
 		case R.id.menu_settings:

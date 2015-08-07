@@ -9,7 +9,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
-        app:placeholderImage="@drawable/ic_action_folder_closed" />
+        app:placeholderImage="@drawable/folder_closed" />
 
     <TextView
         android:id="@+id/nav_child_title"

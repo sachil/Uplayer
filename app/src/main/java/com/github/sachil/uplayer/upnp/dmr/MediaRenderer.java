@@ -48,8 +48,7 @@ public class MediaRenderer {
 			new RenderingControlLastChangeParser());
 	private LastChangeAwareServiceManager<AvtransportService> mAVtransportServiceManager = null;
 	private LastChangeAwareServiceManager<RenderingControlService> mRenderercontrolServiceManager = null;
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+
 	public MediaRenderer(final Context context) {
 		DeviceType type = new UDADeviceType(UpnpUnity.DMR, UpnpUnity.VERSION);
 		DeviceDetails details = new DeviceDetails(

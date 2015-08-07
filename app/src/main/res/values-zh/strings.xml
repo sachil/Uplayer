@@ -12,4 +12,6 @@
     <string name="title_media">媒体内容</string>
     <string name="action_settings">设置</string>
     <string name="action_exit">退出</string>
+    <string name="action_play">播放</string>
+    <string name="action_add_to_playlist">添加到列表</string>
 </resources>

@@ -9,13 +9,8 @@
         android:id="@+id/player_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/half_transparent"
         android:fitsSystemWindows="true">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/half_transparent">
-        </View>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/player_toolbar"

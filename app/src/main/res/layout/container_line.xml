@@ -19,7 +19,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:scaleType="centerCrop"
-            app:placeholderImage="@drawable/ic_action_folder_closed" />
+            app:placeholderImage="@drawable/folder_closed" />
 
         <TextView
             android:id="@+id/container_title"

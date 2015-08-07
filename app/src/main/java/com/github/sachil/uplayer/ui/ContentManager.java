@@ -1,7 +1,6 @@
 package com.github.sachil.uplayer.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.fourthline.cling.model.meta.Device;
@@ -10,14 +9,15 @@ import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.support.model.container.Container;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.ui.adapter.ContentAdapter;
-import com.github.sachil.uplayer.ui.content.DividerItemDecoration;
+import com.github.sachil.uplayer.ui.content.DividerGridItemDecoration;
+import com.github.sachil.uplayer.ui.content.DividerListItemDecoration;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
 import com.github.sachil.uplayer.ui.message.BrowseMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
@@ -34,6 +34,13 @@ public class ContentManager {
 	private RecyclerView mRecyclerView = null;
 	private ContentAdapter mContentAdapter = null;
 	private List<ContentItem> mContentList = null;
+	private DividerListItemDecoration mDecoration = null;
+
+	private LAYOUT_TYPE mLayout = LAYOUT_TYPE.LIST;
+
+	public enum LAYOUT_TYPE {
+		LIST, GRID
+	}
 
 	public ContentManager(Context context, View contentView) {
 
@@ -91,8 +98,16 @@ public class ContentManager {
 				EventBus.getDefault().post(new ActionMessage(-1, 0, null));
 			}
 			break;
+		case R.id.menu_layout:
+			mLayout = (LAYOUT_TYPE) message.getExtra();
+			updateView();
+			break;
 		}
 
+	}
+
+	public LAYOUT_TYPE getLayout() {
+		return mLayout;
 	}
 
 	public void clean() {
@@ -103,11 +118,36 @@ public class ContentManager {
 	private void createView(View contentView) {
 		mRecyclerView = (RecyclerView) contentView
 				.findViewById(R.id.main_recyclerview);
-		mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-		mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,
-				DividerItemDecoration.VERTICAL_LIST));
-		mContentAdapter = new ContentAdapter();
-		mRecyclerView.setAdapter(mContentAdapter);
+		updateView();
+
+	}
+
+	private void updateView() {
+
+		if(mContentAdapter != null)
+			mContentAdapter.changeLayoutType(mLayout);
+
+		if (mLayout == LAYOUT_TYPE.LIST) {
+			mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+
+			if(mDecoration == null)
+				mDecoration = new DividerListItemDecoration(
+						mContext, DividerListItemDecoration.VERTICAL_LIST);
+
+			mRecyclerView.removeItemDecoration(mDecoration);
+			mRecyclerView.addItemDecoration(mDecoration);
+		} else if (mLayout == LAYOUT_TYPE.GRID) {
+			mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
+			if(mDecoration != null)
+			mRecyclerView.removeItemDecoration(mDecoration);
+//			mRecyclerView
+//					.addItemDecoration(new DividerGridItemDecoration(mContext));
+		}
+		if (mContentAdapter == null) {
+			mContentAdapter = new ContentAdapter(mContext);
+			mRecyclerView.setAdapter(mContentAdapter);
+			mContentAdapter.changeLayoutType(mLayout);
+		}
 	}
 
 	private void browseContent(Device device, Container container) {

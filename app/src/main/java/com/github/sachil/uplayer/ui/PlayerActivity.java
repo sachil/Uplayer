@@ -12,6 +12,7 @@ import org.fourthline.cling.support.model.PositionInfo;
 import org.fourthline.cling.support.model.SeekMode;
 import org.fourthline.cling.support.model.TransportState;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
@@ -26,10 +27,18 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.ui.message.ErrorMessage;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
@@ -44,6 +53,7 @@ public class PlayerActivity extends AppCompatActivity
 		implements View.OnClickListener {
 	private static final String TAG = PlayerActivity.class.getSimpleName();
 
+	private Context mContext = null;
 	private View mBackground = null;
 	private Toolbar mToolbar = null;
 	private TextView mTitle = null;
@@ -70,6 +80,7 @@ public class PlayerActivity extends AppCompatActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.player_activity);
+		mContext = this;
 		initView();
 		mController = Controller.getInstance();
 		mController.registerLastChange();
@@ -212,39 +223,8 @@ public class PlayerActivity extends AppCompatActivity
 				else if (mode == PlayMode.SHUFFLE)
 					mModeButton.setIcon(IconValue.SHUFFLE);
 
-				if (metadata.getAlbumArt() != null) {
-					mThumb.setController(Fresco.newDraweeControllerBuilder()
-							.setControllerListener(
-									new BaseControllerListener<ImageInfo>() {
-
-										@Override
-										public void onFinalImageSet(String id,
-												ImageInfo imageInfo,
-												Animatable animatable) {
-
-											mThumb.setDrawingCacheEnabled(true);
-											int defaultColor = getResources()
-													.getColor(
-															R.color.half_transparent);
-
-											/**
-											 * 有时候palette一次解析并不能得到正确的颜色,所以这里尝试3次
-											 */
-											int i = 0;
-											do {
-												generateBackgroundColor(mThumb
-														.getDrawingCache());
-												i++;
-											} while (i < 3
-													&& mBackgroundColor == defaultColor);
-											mBackground.setBackgroundColor(
-													mBackgroundColor);
-											mThumb.setDrawingCacheEnabled(
-													false);
-										}
-									})
-							.setUri(Uri.parse(metadata.getAlbumArt())).build());
-				}
+				if (metadata.getAlbumArt() != null)
+					getAlbumArt(metadata.getAlbumArt());
 			} else {
 				mPlayPauseButton.setIcon(IconValue.PLAY);
 
@@ -326,9 +306,40 @@ public class PlayerActivity extends AppCompatActivity
 		mListButton.setOnClickListener(this);
 	}
 
-	private void generateBackgroundColor(Bitmap bitmap) {
+	private void getAlbumArt(String uri) {
+		ImageRequest imageRequest = ImageRequestBuilder
+				.newBuilderWithSource(Uri.parse(uri))
+				.setProgressiveRenderingEnabled(true).build();
+		ImagePipeline imagePipeline = Fresco.getImagePipeline();
+		DataSource<CloseableReference<CloseableImage>> dataSource = imagePipeline
+				.fetchDecodedImage(imageRequest, mContext);
+		dataSource.subscribe(new BaseBitmapDataSubscriber() {
+			@Override
+			protected void onNewResultImpl(Bitmap bitmap) {
+				int defaultColor = mContext.getResources()
+						.getColor(R.color.half_transparent);
+				int i = 0;
+				int backgroundColor;
+				do {
+					backgroundColor = generateBackgroundColor(bitmap);
+					i++;
+				} while (i < 3 && backgroundColor == defaultColor);
+
+				mBackground.setBackgroundColor(backgroundColor);
+				mThumb.setImageBitmap(bitmap);
+			}
+
+			@Override
+			protected void onFailureImpl(
+					DataSource<CloseableReference<CloseableImage>> dataSource) {
+			}
+		}, CallerThreadExecutor.getInstance());
+
+	}
+
+	private int generateBackgroundColor(Bitmap bitmap) {
 		Palette palette = Palette.from(bitmap).generate();
-		mBackgroundColor = palette.getLightMutedColor(
+		return palette.getDarkMutedColor(
 				getResources().getColor(R.color.half_transparent));
 	}
 

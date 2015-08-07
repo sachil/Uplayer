@@ -10,7 +10,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
-        app:placeholderImage="@drawable/ic_action_folder_open"/>
+        app:placeholderImage="@drawable/folder_open"/>
 
     <TextView
         android:id="@+id/nav_group_title"
