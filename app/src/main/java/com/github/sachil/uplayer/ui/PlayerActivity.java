@@ -40,6 +40,8 @@ import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.github.sachil.uplayer.R;
+import com.github.sachil.uplayer.Utils;
+import com.github.sachil.uplayer.player.MusicService;
 import com.github.sachil.uplayer.ui.message.ErrorMessage;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
@@ -74,7 +76,6 @@ public class PlayerActivity extends AppCompatActivity
 	private TimerTask mPositionTask = null;
 	private Controller mController = null;
 	private TransportState mState = TransportState.NO_MEDIA_PRESENT;
-	private int mBackgroundColor = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +83,7 @@ public class PlayerActivity extends AppCompatActivity
 		setContentView(R.layout.player_activity);
 		mContext = this;
 		initView();
-		mController = Controller.getInstance();
+		mController = MusicService.getInstance().getController();
 		mController.registerLastChange();
 
 	}
@@ -118,8 +119,8 @@ public class PlayerActivity extends AppCompatActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_main, menu);
-		return true;
+		getMenuInflater().inflate(R.menu.menu_player, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -325,8 +326,16 @@ public class PlayerActivity extends AppCompatActivity
 					i++;
 				} while (i < 3 && backgroundColor == defaultColor);
 
-				mBackground.setBackgroundColor(backgroundColor);
-				mThumb.setImageBitmap(bitmap);
+				final AlbumArt albumArt = new AlbumArt(backgroundColor, bitmap);
+
+				Utils.UI_THREAD.post(new Runnable() {
+					@Override
+					public void run() {
+						mBackground.setBackgroundColor(albumArt.mColor);
+						mThumb.setImageBitmap(albumArt.mBitmap);
+					}
+				});
+
 			}
 
 			@Override
@@ -363,5 +372,15 @@ public class PlayerActivity extends AppCompatActivity
 			}
 		});
 		thread.start();
+	}
+
+	private class AlbumArt {
+		private int mColor = 0;
+		private Bitmap mBitmap = null;
+
+		public AlbumArt(int color, Bitmap bitmap) {
+			mColor = color;
+			mBitmap = bitmap;
+		}
 	}
 }

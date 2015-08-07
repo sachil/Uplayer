@@ -194,9 +194,9 @@ public class MusicPlayer implements AVPlayer, MediaPlayer.OnPreparedListener,
 
 	@Override
 	public void close() {
-		mMediaPlayer.stop();
-		mMediaPlayer.reset();
+//		mMediaPlayer.stop();
+//		mMediaPlayer.reset();
 		mMediaPlayer.release();
-		mListener.transportStateChanged(TransportState.STOPPED);
+		//mListener.transportStateChanged(TransportState.STOPPED);
 	}
 }

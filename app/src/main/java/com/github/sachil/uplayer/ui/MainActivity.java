@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity
 		initView();
 		bindService(new Intent(this, AndroidUpnpServiceImpl.class), this,
 				Context.BIND_AUTO_CREATE);
-		startService(new Intent(mContext, MusicService.class));
 	}
 
 	@Override
@@ -101,8 +100,6 @@ public class MainActivity extends AppCompatActivity
 		UpnpUnity.UPNP_SERVICE = mUpnpService;
 		mNavmanager = new NavManager(mContext,
 				findViewById(android.R.id.content));
-		mPlaybarManager = new PlaybarManager(mContext,
-				findViewById(android.R.id.content));
 		mContentManager = new ContentManager(mContext,
 				findViewById(android.R.id.content));
 		MediaServer server = new MediaServer(mContext,
@@ -117,6 +114,9 @@ public class MainActivity extends AppCompatActivity
 			listener.refreshDevice(device, true);
 		mUpnpService.getRegistry().addListener(listener);
 		mUpnpService.getControlPoint().search();
+		startService(new Intent(mContext, MusicService.class));
+		mPlaybarManager = new PlaybarManager(mContext,
+				findViewById(android.R.id.content));
 	}
 
 	@Override
@@ -151,16 +151,14 @@ public class MainActivity extends AppCompatActivity
 					EventBus.getDefault()
 							.post(new ActionMessage(R.id.menu_layout, 0,
 									ContentManager.LAYOUT_TYPE.GRID));
-				}
-//				else if (mContentManager
-//						.getLayout() == ContentManager.LAYOUT_TYPE.GRID) {
-//					item.setIcon(getResources()
-//							.getDrawable(R.drawable.menu_staggered_grid));
-//					EventBus.getDefault()
-//							.post(new ActionMessage(R.id.menu_layout, 0,
-//									ContentManager.LAYOUT_TYPE.STAGGERED_GRID));
-//				}
-				else {
+				} else if (mContentManager
+						.getLayout() == ContentManager.LAYOUT_TYPE.GRID) {
+					item.setIcon(getResources()
+							.getDrawable(R.drawable.menu_staggered_grid));
+					EventBus.getDefault()
+							.post(new ActionMessage(R.id.menu_layout, 0,
+									ContentManager.LAYOUT_TYPE.STAGGERED_GRID));
+				} else {
 					item.setIcon(
 							getResources().getDrawable(R.drawable.menu_list));
 					EventBus.getDefault()

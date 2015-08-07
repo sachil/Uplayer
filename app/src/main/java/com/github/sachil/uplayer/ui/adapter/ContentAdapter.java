@@ -18,6 +18,7 @@ import android.os.Looper;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,7 @@ import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.github.sachil.uplayer.R;
+import com.github.sachil.uplayer.Utils;
 import com.github.sachil.uplayer.ui.ContentManager.LAYOUT_TYPE;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
 import com.github.sachil.uplayer.upnp.dmc.ContentItem;
@@ -44,26 +46,40 @@ import de.greenrobot.event.EventBus;
 
 public class ContentAdapter
 		extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
 	private static final String TAG = ContentAdapter.class.getSimpleName();
-	private static final Handler UI_THREAD = new Handler(
-			Looper.getMainLooper());
 	private Context mContext = null;
 	private List<ContentItem> mContents = null;
+	private List<Integer> mSize = null;
+	private int mInitSize = -1;
 	private LAYOUT_TYPE mLayoutType = LAYOUT_TYPE.LIST;
 
 	public ContentAdapter(Context context) {
 		mContext = context;
 		mContents = new ArrayList<>();
+		mSize = new ArrayList<>();
 	}
 
 	public void refresh(List contents) {
 		mContents = contents;
+
+		if (mLayoutType == LAYOUT_TYPE.STAGGERED_GRID) {
+			mSize.clear();
+			mInitSize = -1;
+			for (int i = 0; i < mContents.size(); i++)
+				mSize.add((int) (Math.random() * 100));
+		}
+
 		notifyDataSetChanged();
 	}
 
 	public void changeLayoutType(LAYOUT_TYPE type) {
 		mLayoutType = type;
+		if (mLayoutType == LAYOUT_TYPE.STAGGERED_GRID) {
+			mSize.clear();
+			mInitSize = -1;
+			for (int i = 0; i < mContents.size(); i++)
+				mSize.add((int) (Math.random() * 100));
+		}
 		notifyDataSetChanged();
 	}
 
@@ -85,6 +101,11 @@ public class ContentAdapter
 				viewType = 2;
 			else
 				viewType = 3;
+		} else {
+			if (mContents.get(position).isContainer())
+				viewType = 4;
+			else
+				viewType = 5;
 		}
 		return viewType;
 	}
@@ -107,6 +128,14 @@ public class ContentAdapter
 					.inflate(R.layout.container_grid, parent, false));
 			break;
 		case 3:
+			viewHolder = new ItemHolder(LayoutInflater.from(mContext)
+					.inflate(R.layout.item_grid, parent, false));
+			break;
+		case 4:
+			viewHolder = new ContainerHolder(LayoutInflater.from(mContext)
+					.inflate(R.layout.container_grid, parent, false));
+			break;
+		case 5:
 			viewHolder = new ItemHolder(LayoutInflater.from(mContext)
 					.inflate(R.layout.item_grid, parent, false));
 			break;
@@ -137,6 +166,17 @@ public class ContentAdapter
 			if (item instanceof MusicTrack) {
 				final ItemHolder viewHolder = (ItemHolder) holder;
 				MusicTrack track = (MusicTrack) item;
+
+				if (mLayoutType == LAYOUT_TYPE.STAGGERED_GRID) {
+					ViewGroup.LayoutParams lp = viewHolder.itemView
+							.getLayoutParams();
+
+					if (mInitSize == -1)
+						mInitSize = lp.height;
+					lp.height = mInitSize + mSize.get(position);
+					viewHolder.itemView.setLayoutParams(lp);
+				}
+
 				viewHolder.mTitle.setText(track.getTitle());
 
 				if (track.getFirstPropertyValue(
@@ -145,10 +185,10 @@ public class ContentAdapter
 							.getFirstPropertyValue(
 									DIDLObject.Property.UPNP.ALBUM_ART_URI.class)
 							.toString();
-					if (mLayoutType == LAYOUT_TYPE.GRID)
-						getAlbumArt(albumUri, viewHolder);
-					else if (mLayoutType == LAYOUT_TYPE.LIST)
+					if (mLayoutType == LAYOUT_TYPE.LIST)
 						viewHolder.mItemImage.setImageURI(Uri.parse(albumUri));
+					else
+						getAlbumArt(albumUri, viewHolder);
 				}
 
 				viewHolder.mArtist.setText(track.getArtists()[0].getName());
@@ -157,7 +197,7 @@ public class ContentAdapter
 					public void onClick(View view) {
 						switch (view.getId()) {
 						case R.id.item_menu:
-							showPopupMenu(view, null);
+							showPopupMenu(view, position);
 							break;
 						case R.id.item_row:
 							EventBus.getDefault().post(new ActionMessage(
@@ -236,7 +276,7 @@ public class ContentAdapter
 
 				final AlbumArt albumArt = new AlbumArt(backgroundColor, bitmap);
 
-				UI_THREAD.post(new Runnable() {
+				Utils.UI_THREAD.post(new Runnable() {
 					@Override
 					public void run() {
 						viewHolder.mBasicView
@@ -254,7 +294,7 @@ public class ContentAdapter
 
 	}
 
-	private void showPopupMenu(View view, Item item) {
+	private void showPopupMenu(View view, final int position) {
 
 		PopupMenu popupMenu = new PopupMenu(mContext, view);
 		popupMenu.inflate(R.menu.menu_item);
@@ -265,7 +305,8 @@ public class ContentAdapter
 
 						switch (menuItem.getItemId()) {
 						case R.id.menu_play:
-
+							EventBus.getDefault().post(new ActionMessage(
+									R.id.item_row, 0, mContents.get(position)));
 							break;
 						case R.id.menu_add_playlist:
 

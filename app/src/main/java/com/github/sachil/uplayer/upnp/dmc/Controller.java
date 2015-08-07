@@ -330,7 +330,6 @@ public class Controller {
 					if (currentPlayMode != null) {
 						mMetadata.setPlayMode(currentPlayMode.getValue());
 					}
-
 					EventBus.getDefault().post(new PlayerMessage(
 							PlayerMessage.REFRESH_METADATA, mMetadata));
 				} catch (Exception e) {

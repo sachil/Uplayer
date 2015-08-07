@@ -13,11 +13,14 @@ import android.content.Context;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
+import android.os.Looper;
 
 public class Utils {
 
 	private static final String LOG_TAG = Utils.class.getSimpleName();
 
+	public static final Handler UI_THREAD = new Handler(Looper.getMainLooper());
 	public static final String APP_NAME = "Uplayer";
 	public static final String VIDEO_PREFIX = "video";
 	public static final String AUDIO_PREFIX = "audio";

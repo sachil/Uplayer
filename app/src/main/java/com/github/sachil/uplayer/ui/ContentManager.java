@@ -12,6 +12,7 @@ import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 import com.github.sachil.uplayer.R;
@@ -39,7 +40,7 @@ public class ContentManager {
 	private LAYOUT_TYPE mLayout = LAYOUT_TYPE.LIST;
 
 	public enum LAYOUT_TYPE {
-		LIST, GRID
+		LIST, GRID,STAGGERED_GRID
 	}
 
 	public ContentManager(Context context, View contentView) {
@@ -139,9 +140,12 @@ public class ContentManager {
 		} else if (mLayout == LAYOUT_TYPE.GRID) {
 			mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
 			if(mDecoration != null)
-			mRecyclerView.removeItemDecoration(mDecoration);
-//			mRecyclerView
-//					.addItemDecoration(new DividerGridItemDecoration(mContext));
+				mRecyclerView.removeItemDecoration(mDecoration);
+		}else{
+			mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,
+					StaggeredGridLayoutManager.VERTICAL));
+			if(mDecoration != null)
+				mRecyclerView.removeItemDecoration(mDecoration);
 		}
 		if (mContentAdapter == null) {
 			mContentAdapter = new ContentAdapter(mContext);

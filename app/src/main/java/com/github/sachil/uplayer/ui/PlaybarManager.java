@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.sachil.uplayer.R;
+import com.github.sachil.uplayer.player.MusicService;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
 import com.github.sachil.uplayer.ui.message.ErrorMessage;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
@@ -53,11 +54,8 @@ public class PlaybarManager implements View.OnClickListener {
 
 		switch (message.getViewId()) {
 		case -1:
-			if (mController == null) {
-				mController = Controller.getInstance();
-				mController.registerLastChange();
-			}
-
+			if (mController == null)
+				mController = MusicService.getInstance().getController();
 			playItem();
 			break;
 		}
@@ -97,6 +95,8 @@ public class PlaybarManager implements View.OnClickListener {
 			break;
 
 		case R.id.playbar_playpause:
+			if (mController == null)
+				mController = MusicService.getInstance().getController();
 			if (mState == TransportState.PLAYING)
 				mController.pause();
 			else if (mState == TransportState.PAUSED_PLAYBACK)
