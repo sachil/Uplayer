@@ -22,15 +22,14 @@
         android:gravity="center_vertical"
         android:text="group"/>
 
-    <net.steamcrafted.materialiconlib.MaterialIconView
+    <ImageView
         android:id="@+id/nav_group_arrow"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
-        app:materialIcon="chevron_down"
-        app:materialIconColor="@color/grey_600"
+        android:src="@drawable/chevron_down_grey"
         />
 
 </RelativeLayout>

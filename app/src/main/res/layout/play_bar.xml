@@ -24,34 +24,28 @@
         app:roundAsCircle="true"/>
 
 
-    <net.steamcrafted.materialiconlib.MaterialIconView
+    <ImageView
         android:id="@+id/playbar_playlist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
         android:background="?attr/selectableItemBackground"
-        android:padding="12dp"
         android:scaleType="center"
-        app:materialIcon="format_list_bulleted"
-        app:materialIconColor="@color/white"
-        app:materialIconSize="32dp"
+        android:src="@drawable/playback_list"
         />
 
-    <net.steamcrafted.materialiconlib.MaterialIconView
+    <ImageView
         android:id="@+id/playbar_playpause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
         android:layout_toLeftOf="@id/playbar_playlist"
         android:background="?attr/selectableItemBackground"
-        android:padding="12dp"
         android:scaleType="center"
-        app:materialIcon="play"
-        app:materialIconColor="@color/white"
-        app:materialIconSize="32dp"
+        android:src="@drawable/playback_play"
         />
 
     <LinearLayout

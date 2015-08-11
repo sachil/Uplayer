@@ -16,24 +16,21 @@
             android:id="@+id/player_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:fitsSystemWindows="true"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark"
-            android:fitsSystemWindows="true">
+            app:theme="@style/ThemeOverlay.AppCompat.Dark">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <net.steamcrafted.materialiconlib.MaterialIconView
+                <ImageView
                     android:id="@+id/player_home"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_centerVertical="true"
                     android:background="?attr/selectableItemBackground"
-                    android:scaleType="center"
-                    app:materialIcon="chevron_down"
-                    app:materialIconColor="@color/white"
-                    app:materialIconSize="32dp"
+                    android:src="@drawable/action_back"
                     />
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
@@ -140,16 +137,12 @@
                 android:clickable="true"
                 android:gravity="center">
 
-                <net.steamcrafted.materialiconlib.MaterialIconView
+                <ImageView
                     android:id="@+id/player_model"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="?attr/selectableItemBackground"
-                    android:padding="12dp"
-                    android:scaleType="center"
-                    app:materialIcon="repeat"
-                    app:materialIconColor="@color/white"
-                    app:materialIconSize="36dp"
+                    android:src="@drawable/playback_repeat_white"
                     />
             </LinearLayout>
 
@@ -160,16 +153,12 @@
                 android:clickable="true"
                 android:gravity="center">
 
-                <net.steamcrafted.materialiconlib.MaterialIconView
+                <ImageView
                     android:id="@+id/player_prev"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="?attr/selectableItemBackground"
-                    android:padding="12dp"
-                    android:scaleType="center"
-                    app:materialIcon="skip_previous"
-                    app:materialIconColor="@color/white"
-                    app:materialIconSize="36dp"
+                    android:src="@drawable/playback_previous"
                     />
 
             </LinearLayout>
@@ -181,16 +170,12 @@
                 android:clickable="true"
                 android:gravity="center">
 
-                <net.steamcrafted.materialiconlib.MaterialIconView
+                <ImageView
                     android:id="@+id/player_play_pause"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="?attr/selectableItemBackground"
-                    android:padding="12dp"
-                    android:scaleType="center"
-                    app:materialIcon="play"
-                    app:materialIconColor="@color/white"
-                    app:materialIconSize="36dp"
+                    android:src="@drawable/playback_play"
                     />
 
             </LinearLayout>
@@ -202,16 +187,12 @@
                 android:clickable="true"
                 android:gravity="center">
 
-                <net.steamcrafted.materialiconlib.MaterialIconView
+                <ImageView
                     android:id="@+id/player_next"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="?attr/selectableItemBackground"
-                    android:padding="12dp"
-                    android:scaleType="center"
-                    app:materialIcon="skip_next"
-                    app:materialIconColor="@color/white"
-                    app:materialIconSize="36dp"
+                    android:src="@drawable/playback_next"
                     />
 
             </LinearLayout>
@@ -223,16 +204,12 @@
                 android:clickable="true"
                 android:gravity="center">
 
-                <net.steamcrafted.materialiconlib.MaterialIconView
+                <ImageView
                     android:id="@+id/player_playlist"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="?attr/selectableItemBackground"
-                    android:padding="12dp"
-                    android:scaleType="center"
-                    app:materialIcon="format_list_bulleted"
-                    app:materialIconColor="@color/white"
-                    app:materialIconSize="36dp"
+                    android:src="@drawable/playback_list"
                     />
 
             </LinearLayout>

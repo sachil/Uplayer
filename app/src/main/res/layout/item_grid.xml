@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true">
 
-            <net.steamcrafted.materialiconlib.MaterialIconView
+            <ImageView
                 android:id="@+id/item_menu"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -36,11 +36,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
                 android:background="?attr/selectableItemBackground"
-                android:padding="12dp"
                 android:scaleType="center"
-                app:materialIcon="dots_vertical"
-                app:materialIconColor="@color/white"
-                app:materialIconSize="24dp"
+                android:src="@drawable/menu_overflow_white"
                 />
 
             <LinearLayout

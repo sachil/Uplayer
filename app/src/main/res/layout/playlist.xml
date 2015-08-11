@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <ImageView
+            android:id="@+id/playlist_model"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="16dp"
+            android:background="?attr/selectableItemBackground"
+            android:layout_centerVertical="true"
+            android:src="@drawable/playback_repeat_grey"
+            />
+
+        <ImageView
+            android:id="@+id/playlist_clear"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/action_clear"/>
+
+        <TextView
+            android:id="@+id/playlist_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@id/playlist_clear"
+            android:layout_toRightOf="@id/playlist_model"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="20sp"
+            android:text="kfjdlfjlsdkjflkdjf"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="@color/grey_500"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/playlist_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

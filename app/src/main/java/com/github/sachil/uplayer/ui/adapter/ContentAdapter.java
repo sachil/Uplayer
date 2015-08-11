@@ -3,8 +3,6 @@ package com.github.sachil.uplayer.ui.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.steamcrafted.materialiconlib.MaterialIconView;
-
 import org.fourthline.cling.support.model.DIDLObject;
 import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.item.Item;
@@ -13,16 +11,14 @@ import org.fourthline.cling.support.model.item.MusicTrack;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -231,7 +227,7 @@ public class ContentAdapter
 		private SimpleDraweeView mItemImage = null;
 		private TextView mTitle = null;
 		private TextView mArtist = null;
-		private MaterialIconView mMenu = null;
+		private ImageView mMenu = null;
 
 		public ItemHolder(View view) {
 			super(view);
@@ -239,7 +235,7 @@ public class ContentAdapter
 			mItemImage = (SimpleDraweeView) view.findViewById(R.id.item_image);
 			mTitle = (TextView) view.findViewById(R.id.item_title);
 			mArtist = (TextView) view.findViewById(R.id.item_artist);
-			mMenu = (MaterialIconView) view.findViewById(R.id.item_menu);
+			mMenu = (ImageView) view.findViewById(R.id.item_menu);
 			mBasicView = view.findViewById(R.id.item_basic);
 		}
 	}

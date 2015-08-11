@@ -2,10 +2,6 @@ package com.github.sachil.uplayer.ui;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import net.steamcrafted.materialiconlib.MaterialDrawableBuilder.IconValue;
-import net.steamcrafted.materialiconlib.MaterialIconView;
-
 import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.support.model.PlayMode;
 import org.fourthline.cling.support.model.PositionInfo;
@@ -14,7 +10,6 @@ import org.fourthline.cling.support.model.TransportState;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,12 +27,10 @@ import com.facebook.common.executors.CallerThreadExecutor;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
-import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.github.sachil.uplayer.R;
@@ -65,12 +59,12 @@ public class PlayerActivity extends AppCompatActivity
 	private TextView mCurrentTime = null;
 	private TextView mTotalTime = null;
 	private SeekBar mSeekBar = null;
-	private MaterialIconView mHomeButton = null;
-	private MaterialIconView mModeButton = null;
-	private MaterialIconView mPrevButton = null;
-	private MaterialIconView mPlayPauseButton = null;
-	private MaterialIconView mNextButton = null;
-	private MaterialIconView mListButton = null;
+	private ImageView mHomeButton = null;
+	private ImageView mModeButton = null;
+	private ImageView mPrevButton = null;
+	private ImageView mPlayPauseButton = null;
+	private ImageView mNextButton = null;
+	private ImageView mListButton = null;
 
 	private Timer mPositionTimer = null;
 	private TimerTask mPositionTask = null;
@@ -80,7 +74,7 @@ public class PlayerActivity extends AppCompatActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.player_activity);
+		setContentView(R.layout.activity_player);
 		mContext = this;
 		initView();
 		mController = MusicService.getInstance().getController();
@@ -195,7 +189,7 @@ public class PlayerActivity extends AppCompatActivity
 			TransportState state = metadata.getState();
 			mState = state;
 			if (state == TransportState.PLAYING) {
-				mPlayPauseButton.setIcon(IconValue.PAUSE);
+				mPlayPauseButton.setImageResource(R.drawable.playback_pause);
 				mTitle.setText(metadata.getTitle());
 				mArtist.setText(metadata.getCreator());
 				mAlbum.setText(metadata.getAlbum());
@@ -218,16 +212,16 @@ public class PlayerActivity extends AppCompatActivity
 				}
 				PlayMode mode = metadata.getPlayMode();
 				if (mode == PlayMode.NORMAL)
-					mModeButton.setIcon(IconValue.REPEAT);
+					mModeButton.setImageResource(R.drawable.playback_repeat_white);
 				else if (mode == PlayMode.REPEAT_ONE)
-					mModeButton.setIcon(IconValue.REPEAT_ONCE);
+					mModeButton.setImageResource(R.drawable.playback_repeat_1_white);
 				else if (mode == PlayMode.SHUFFLE)
-					mModeButton.setIcon(IconValue.SHUFFLE);
+					mModeButton.setImageResource(R.drawable.playback_schuffle_white);
 
 				if (metadata.getAlbumArt() != null)
 					getAlbumArt(metadata.getAlbumArt());
 			} else {
-				mPlayPauseButton.setIcon(IconValue.PLAY);
+				mPlayPauseButton.setImageResource(R.drawable.playback_play);
 
 				// transportState不是PLAYING状态时,停止获取当前播放的位置信息。
 
@@ -292,18 +286,18 @@ public class PlayerActivity extends AppCompatActivity
 					}
 				});
 
-		mHomeButton = (MaterialIconView) findViewById(R.id.player_home);
+		mHomeButton = (ImageView) findViewById(R.id.player_home);
 		mHomeButton.setOnClickListener(this);
-		mModeButton = (MaterialIconView) findViewById(R.id.player_model);
+		mModeButton = (ImageView) findViewById(R.id.player_model);
 		mModeButton.setOnClickListener(this);
-		mPrevButton = (MaterialIconView) findViewById(R.id.player_prev);
+		mPrevButton = (ImageView) findViewById(R.id.player_prev);
 		mPrevButton.setOnClickListener(this);
-		mPlayPauseButton = (MaterialIconView) findViewById(
+		mPlayPauseButton = (ImageView) findViewById(
 				R.id.player_play_pause);
 		mPlayPauseButton.setOnClickListener(this);
-		mNextButton = (MaterialIconView) findViewById(R.id.player_next);
+		mNextButton = (ImageView) findViewById(R.id.player_next);
 		mNextButton.setOnClickListener(this);
-		mListButton = (MaterialIconView) findViewById(R.id.player_playlist);
+		mListButton = (ImageView) findViewById(R.id.player_playlist);
 		mListButton.setOnClickListener(this);
 	}
 

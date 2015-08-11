@@ -1,7 +1,5 @@
 package com.github.sachil.uplayer.ui;
 
-import net.steamcrafted.materialiconlib.MaterialDrawableBuilder.IconValue;
-import net.steamcrafted.materialiconlib.MaterialIconView;
 
 import org.fourthline.cling.support.model.TransportState;
 
@@ -9,12 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.player.MusicService;
+import com.github.sachil.uplayer.ui.content.PlaylistView;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
 import com.github.sachil.uplayer.ui.message.ErrorMessage;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
@@ -33,10 +33,11 @@ public class PlaybarManager implements View.OnClickListener {
 	private SimpleDraweeView mAlbum = null;
 	private TextView mTitle = null;
 	private TextView mArtist = null;
-	private MaterialIconView mPlayPause = null;
-	private MaterialIconView mPlayList = null;
+	private ImageView mPlayPause = null;
+	private ImageView mPlayList = null;
 	private Controller mController = null;
 	private TransportState mState = TransportState.NO_MEDIA_PRESENT;
+	private PlaylistView mPlaylistView = null;
 
 	public PlaybarManager(Context context, View contentView) {
 		mContext = context;
@@ -103,7 +104,7 @@ public class PlaybarManager implements View.OnClickListener {
 				mController.play();
 			break;
 		case R.id.playbar_playlist:
-
+			mPlaylistView.show();
 			break;
 		}
 	}
@@ -114,12 +115,12 @@ public class PlaybarManager implements View.OnClickListener {
 			Metadata metadata = (Metadata) data;
 			mState = metadata.getState();
 			if (mState == TransportState.PLAYING) {
-				mPlayPause.setIcon(IconValue.PAUSE);
+				mPlayPause.setImageResource(R.drawable.playback_pause);
 				mTitle.setText(metadata.getTitle());
 				mArtist.setText(metadata.getCreator());
 				mAlbum.setImageURI(Uri.parse(metadata.getAlbumArt()));
 			} else
-				mPlayPause.setIcon(IconValue.PLAY);
+				mPlayPause.setImageResource(R.drawable.playback_play);
 
 		}
 	}
@@ -149,14 +150,15 @@ public class PlaybarManager implements View.OnClickListener {
 	private void createView(View contentView) {
 
 		contentView.findViewById(R.id.playbar_layout).setOnClickListener(this);
+		mPlaylistView = new PlaylistView(mContext,contentView.findViewById(R.id.playbar_layout));
 		mAlbum = (SimpleDraweeView) contentView
 				.findViewById(R.id.playbar_album);
 		mTitle = (TextView) contentView.findViewById(R.id.playbar_title);
 		mArtist = (TextView) contentView.findViewById(R.id.playbar_artist);
-		mPlayPause = (MaterialIconView) contentView
+		mPlayPause = (ImageView) contentView
 				.findViewById(R.id.playbar_playpause);
 		mPlayPause.setOnClickListener(this);
-		mPlayList = (MaterialIconView) contentView
+		mPlayList = (ImageView) contentView
 				.findViewById(R.id.playbar_playlist);
 		mPlayList.setOnClickListener(this);
 

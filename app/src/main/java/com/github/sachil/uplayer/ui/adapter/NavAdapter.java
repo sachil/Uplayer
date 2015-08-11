@@ -2,10 +2,6 @@ package com.github.sachil.uplayer.ui.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.steamcrafted.materialiconlib.MaterialDrawableBuilder.IconValue;
-import net.steamcrafted.materialiconlib.MaterialIconView;
-
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.meta.RemoteDevice;
 
@@ -15,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -147,7 +144,7 @@ public class NavAdapter extends BaseExpandableListAdapter {
 					.findViewById(R.id.nav_group_title);
 			viewHolder.mGroupImage = (SimpleDraweeView) convertView
 					.findViewById(R.id.nav_group_image);
-			viewHolder.mGroupArrow = (MaterialIconView) convertView
+			viewHolder.mGroupArrow = (ImageView) convertView
 					.findViewById(R.id.nav_group_arrow);
 			convertView.setTag(viewHolder);
 
@@ -171,9 +168,9 @@ public class NavAdapter extends BaseExpandableListAdapter {
 		}
 
 		if (isExpanded)
-			viewHolder.mGroupArrow.setIcon(IconValue.CHEVRON_UP);
+			viewHolder.mGroupArrow.setImageResource(R.drawable.chevron_up_grey);
 		else
-			viewHolder.mGroupArrow.setIcon(IconValue.CHEVRON_DOWN);
+			viewHolder.mGroupArrow.setImageResource(R.drawable.chevron_down_grey);
 
 		return convertView;
 	}
@@ -192,7 +189,7 @@ public class NavAdapter extends BaseExpandableListAdapter {
 
 		private SimpleDraweeView mGroupImage = null;
 		private TextView mGroupTitle = null;
-		private MaterialIconView mGroupArrow = null;
+		private ImageView mGroupArrow = null;
 
 	}
 

@@ -9,4 +9,8 @@
 
     <style name="AppTheme" parent="AppTheme.Base"></style>
 
+    <style name="PopAnimation">
+        <item name="android:windowEnterAnimation">@anim/bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/bottom_out</item>
+    </style>
 </resources>
