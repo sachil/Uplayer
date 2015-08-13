@@ -7,6 +7,8 @@ import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.model.types.UDAServiceType;
+import org.fourthline.cling.support.model.DIDLObject;
+import org.fourthline.cling.support.model.container.Container;
 
 import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 
 import com.github.sachil.uplayer.R;
+import com.github.sachil.uplayer.player.MusicService;
 import com.github.sachil.uplayer.ui.adapter.NavAdapter;
 import com.github.sachil.uplayer.ui.content.PatchedExpandableListView;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
@@ -21,7 +24,6 @@ import com.github.sachil.uplayer.ui.message.BrowseMessage;
 import com.github.sachil.uplayer.ui.message.DeviceMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.BrowseCallback;
-import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 import com.github.sachil.uplayer.upnp.dms.ContentTree;
 
 import de.greenrobot.event.EventBus;
@@ -40,7 +42,7 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 	private NavAdapter mMediaAdapter = null;
 	private List<Device> mRendererList = null;
 	private List<Device> mServerList = null;
-	private List<ContentItem> mMediaList = null;
+	private List<DIDLObject> mMediaList = null;
 
 	public NavManager(Context context, View contentView) {
 		mContext = context;
@@ -62,6 +64,8 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 		case R.id.nav_renderer:
 			UpnpUnity.CURRENT_RENDERER = (Device) mRendererAdapter
 					.getChild(groupPosition, childPosition);
+			MusicService.getInstance().getController()
+					.changeDevice(UpnpUnity.CURRENT_RENDERER);
 			mRendererAdapter.refresh(UpnpUnity.CURRENT_RENDERER, null);
 			break;
 
@@ -75,7 +79,7 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 
 		case R.id.nav_media:
 
-			UpnpUnity.CURRENT_CONTAINER = (ContentItem) mMediaAdapter
+			UpnpUnity.CURRENT_CONTAINER = (Container) mMediaAdapter
 					.getChild(groupPosition, childPosition);
 			mMediaAdapter.refresh(UpnpUnity.CURRENT_CONTAINER, null);
 			mDrawerLayout.closeDrawers();
@@ -106,7 +110,6 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 				if (mRendererList.contains(message.getDevice()))
 					mRendererList.remove(message.getDevice());
 			}
-			UpnpUnity.CURRENT_RENDERER = mRendererList.get(0);
 			mRendererAdapter.refresh(UpnpUnity.CURRENT_RENDERER, mRendererList);
 		} else {
 			if (message.isAdd()) {
@@ -120,7 +123,6 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 				if (mServerList.contains(message.getDevice()))
 					mServerList.remove(message.getDevice());
 			}
-			UpnpUnity.CURRENT_SERVER = mServerList.get(0);
 			mServerAdapter.refresh(UpnpUnity.CURRENT_SERVER, mServerList);
 			loadMedia((Device) mServerAdapter.getChild(0, 0));
 		}
@@ -129,7 +131,7 @@ public class NavManager implements ExpandableListView.OnChildClickListener,
 	public void onEventMainThread(BrowseMessage message) {
 		if (message.isRootNode()) {
 			mMediaList = message.getItems();
-			UpnpUnity.CURRENT_CONTAINER = mMediaList.get(0);
+			UpnpUnity.CURRENT_CONTAINER = (Container) mMediaList.get(0);
 			EventBus.getDefault()
 					.post(new ActionMessage(R.id.nav_media, 0, null));
 			mMediaAdapter.refresh(UpnpUnity.CURRENT_CONTAINER, mMediaList);

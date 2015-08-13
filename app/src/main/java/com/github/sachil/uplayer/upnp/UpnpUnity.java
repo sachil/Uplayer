@@ -1,6 +1,5 @@
 package com.github.sachil.uplayer.upnp;
 
-import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 import com.github.sachil.uplayer.upnp.dms.ContentNode;
 import com.github.sachil.uplayer.upnp.dms.ContentTree;
 
@@ -13,6 +12,7 @@ import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.support.model.DIDLObject;
 import org.fourthline.cling.support.model.WriteStatus;
 import org.fourthline.cling.support.model.container.Container;
+import org.fourthline.cling.support.model.item.Item;
 
 public class UpnpUnity {
 
@@ -53,8 +53,8 @@ public class UpnpUnity {
 	public static AndroidUpnpService UPNP_SERVICE = null;
 	public static Device CURRENT_RENDERER = null;
 	public static Device CURRENT_SERVER = null;
-	public static ContentItem CURRENT_CONTAINER = null;
-	public static ContentItem PLAYING_ITEM = null;
+	public static Container CURRENT_CONTAINER = null;
+	public static Item PLAYING_ITEM = null;
 
 	/**
 	 * 创建Container（容器）

@@ -2,6 +2,7 @@ package com.github.sachil.uplayer.ui;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
 import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.support.model.PlayMode;
 import org.fourthline.cling.support.model.PositionInfo;
@@ -40,8 +41,8 @@ import com.github.sachil.uplayer.ui.message.ErrorMessage;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.Controller;
-import com.github.sachil.uplayer.upnp.dmc.MetaDataToXMLGenerator;
-import com.github.sachil.uplayer.upnp.dmc.XMLToMetadataParser.Metadata;
+import com.github.sachil.uplayer.upnp.dmc.Metadata;
+import com.github.sachil.uplayer.upnp.dmc.XMLFactory;
 
 import de.greenrobot.event.EventBus;
 
@@ -212,11 +213,14 @@ public class PlayerActivity extends AppCompatActivity
 				}
 				PlayMode mode = metadata.getPlayMode();
 				if (mode == PlayMode.NORMAL)
-					mModeButton.setImageResource(R.drawable.playback_repeat_white);
+					mModeButton
+							.setImageResource(R.drawable.playback_repeat_white);
 				else if (mode == PlayMode.REPEAT_ONE)
-					mModeButton.setImageResource(R.drawable.playback_repeat_1_white);
+					mModeButton.setImageResource(
+							R.drawable.playback_repeat_1_white);
 				else if (mode == PlayMode.SHUFFLE)
-					mModeButton.setImageResource(R.drawable.playback_schuffle_white);
+					mModeButton.setImageResource(
+							R.drawable.playback_schuffle_white);
 
 				if (metadata.getAlbumArt() != null)
 					getAlbumArt(metadata.getAlbumArt());
@@ -292,8 +296,7 @@ public class PlayerActivity extends AppCompatActivity
 		mModeButton.setOnClickListener(this);
 		mPrevButton = (ImageView) findViewById(R.id.player_prev);
 		mPrevButton.setOnClickListener(this);
-		mPlayPauseButton = (ImageView) findViewById(
-				R.id.player_play_pause);
+		mPlayPauseButton = (ImageView) findViewById(R.id.player_play_pause);
 		mPlayPauseButton.setOnClickListener(this);
 		mNextButton = (ImageView) findViewById(R.id.player_next);
 		mNextButton.setOnClickListener(this);
@@ -354,10 +357,10 @@ public class PlayerActivity extends AppCompatActivity
 				try {
 					Thread.sleep(1000);
 					mController.setUrl(
-							UpnpUnity.PLAYING_ITEM.getItem().getFirstResource()
+							UpnpUnity.PLAYING_ITEM.getFirstResource()
 									.getValue(),
-							MetaDataToXMLGenerator.metadataToXml(
-									UpnpUnity.PLAYING_ITEM.getItem()));
+							XMLFactory.metadataToXml(
+									UpnpUnity.PLAYING_ITEM));
 					Thread.sleep(1000);
 					mController.play();
 				} catch (InterruptedException e) {

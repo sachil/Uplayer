@@ -16,21 +16,19 @@ public class PlaylistView extends PopupWindow {
 
 	private static final String TAG = PlaylistView.class.getSimpleName();
 	private Context mContext = null;
-	private View mParentView = null;
 	private RecyclerView mRecyclerView = null;
 
-	public PlaylistView(Context context, View parent) {
+	public PlaylistView(Context context) {
 		mContext = context;
-		mParentView = parent;
 		createView();
 	}
 
-	public void show() {
+	public void show(View parent) {
 		if (this.isShowing())
 			this.dismiss();
 		else {
 			setAlpha(0.4f);
-			this.showAsDropDown(mParentView, 0, -mParentView.getHeight());
+			this.showAsDropDown(parent, 0, -parent.getHeight());
 		}
 	}
 

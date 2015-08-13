@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.meta.RemoteDevice;
+import org.fourthline.cling.support.model.DIDLObject;
+import org.fourthline.cling.support.model.container.Container;
 
 import android.content.Context;
 import android.net.Uri;
@@ -16,7 +18,6 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.sachil.uplayer.R;
-import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 
 public class NavAdapter extends BaseExpandableListAdapter {
 
@@ -68,13 +69,13 @@ public class NavAdapter extends BaseExpandableListAdapter {
 
 		ChildHolder viewHolder;
 		Device device = null;
-		ContentItem content = null;
+		DIDLObject content = null;
 
 		if (mChilds.get(groupPosition).get(childPosition) instanceof Device)
 			device = (Device) mChilds.get(groupPosition).get(childPosition);
 		else if (mChilds.get(groupPosition)
-				.get(childPosition) instanceof ContentItem)
-			content = (ContentItem) mChilds.get(groupPosition)
+				.get(childPosition) instanceof DIDLObject)
+			content = (DIDLObject) mChilds.get(groupPosition)
 					.get(childPosition);
 
 		if (convertView == null) {
@@ -101,9 +102,8 @@ public class NavAdapter extends BaseExpandableListAdapter {
 					.setText(device.getDetails().getFriendlyName());
 		} else {
 
-			if (content.isContainer()) {
-				viewHolder.mChildTitle
-						.setText(content.getContainer().getTitle());
+			if (content instanceof Container) {
+				viewHolder.mChildTitle.setText(content.getTitle());
 			}
 		}
 		return convertView;
@@ -129,12 +129,12 @@ public class NavAdapter extends BaseExpandableListAdapter {
 			View convertView, ViewGroup parent) {
 		GroupHolder viewHolder;
 		Device device = null;
-		ContentItem content = null;
+		DIDLObject content = null;
 
 		if (mGroups.get(groupPosition) instanceof Device)
 			device = (Device) mGroups.get(groupPosition);
 		else
-			content = (ContentItem) mGroups.get(groupPosition);
+			content = (DIDLObject) mGroups.get(groupPosition);
 
 		if (convertView == null) {
 			viewHolder = new GroupHolder();
@@ -162,15 +162,15 @@ public class NavAdapter extends BaseExpandableListAdapter {
 					.setText(device.getDetails().getFriendlyName());
 		} else {
 
-			if (content.isContainer())
-				viewHolder.mGroupTitle
-						.setText(content.getContainer().getTitle());
+			if (content instanceof DIDLObject)
+				viewHolder.mGroupTitle.setText(content.getTitle());
 		}
 
 		if (isExpanded)
 			viewHolder.mGroupArrow.setImageResource(R.drawable.chevron_up_grey);
 		else
-			viewHolder.mGroupArrow.setImageResource(R.drawable.chevron_down_grey);
+			viewHolder.mGroupArrow
+					.setImageResource(R.drawable.chevron_down_grey);
 
 		return convertView;
 	}

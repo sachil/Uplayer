@@ -36,7 +36,6 @@ import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.Utils;
 import com.github.sachil.uplayer.ui.ContentManager.LAYOUT_TYPE;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
-import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 
 import de.greenrobot.event.EventBus;
 
@@ -44,7 +43,7 @@ public class ContentAdapter
 		extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 	private static final String TAG = ContentAdapter.class.getSimpleName();
 	private Context mContext = null;
-	private List<ContentItem> mContents = null;
+	private List<DIDLObject> mContents = null;
 	private List<Integer> mSize = null;
 	private int mInitSize = -1;
 	private LAYOUT_TYPE mLayoutType = LAYOUT_TYPE.LIST;
@@ -88,17 +87,17 @@ public class ContentAdapter
 	public int getItemViewType(int position) {
 		int viewType = 0;
 		if (mLayoutType == LAYOUT_TYPE.LIST) {
-			if (mContents.get(position).isContainer())
+			if (mContents.get(position) instanceof Container)
 				viewType = 0;
 			else
 				viewType = 1;
 		} else if (mLayoutType == LAYOUT_TYPE.GRID) {
-			if (mContents.get(position).isContainer())
+			if (mContents.get(position) instanceof Container)
 				viewType = 2;
 			else
 				viewType = 3;
 		} else {
-			if (mContents.get(position).isContainer())
+			if (mContents.get(position) instanceof Container)
 				viewType = 4;
 			else
 				viewType = 5;
@@ -143,11 +142,11 @@ public class ContentAdapter
 	public void onBindViewHolder(final RecyclerView.ViewHolder holder,
 			final int position) {
 
-		ContentItem contentItem = mContents.get(position);
+		DIDLObject object = mContents.get(position);
 
-		if (contentItem.isContainer()) {
+		if (object instanceof Container) {
 			ContainerHolder viewHolder = (ContainerHolder) holder;
-			Container container = contentItem.getContainer();
+			Container container = (Container) object;
 			viewHolder.mTitle.setText(container.getTitle());
 			viewHolder.mItemView.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -158,7 +157,7 @@ public class ContentAdapter
 			});
 
 		} else {
-			Item item = contentItem.getItem();
+			Item item = (Item) object;
 			if (item instanceof MusicTrack) {
 				final ItemHolder viewHolder = (ItemHolder) holder;
 				MusicTrack track = (MusicTrack) item;
@@ -306,6 +305,10 @@ public class ContentAdapter
 							break;
 						case R.id.menu_add_playlist:
 
+							EventBus.getDefault()
+									.post(new ActionMessage(
+											R.id.menu_add_playlist, 0,
+											mContents.get(position)));
 							break;
 						}
 						return true;

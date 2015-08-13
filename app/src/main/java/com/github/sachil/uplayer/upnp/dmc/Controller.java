@@ -37,7 +37,6 @@ import android.util.Log;
 import com.github.sachil.uplayer.ui.message.ErrorMessage;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
-import com.github.sachil.uplayer.upnp.dmc.XMLToMetadataParser.Metadata;
 
 import de.greenrobot.event.EventBus;
 
@@ -55,7 +54,6 @@ public class Controller {
 	private AndroidUpnpService mAndroidUpnpService = null;
 	private boolean mIsMute = false;
 	private int mCurrentVolume = 0;
-	private XMLToMetadataParser mXmlToMetadataparser = null;
 	private Metadata mMetadata = null;
 	private SubscriptionCallback mAvSubscriptionCallback = null;
 	private SubscriptionCallback mRenSubscriptionCallback = null;
@@ -269,11 +267,7 @@ public class Controller {
 	}
 
 	public void registerLastChange() {
-
-		if (mXmlToMetadataparser == null)
-			mXmlToMetadataparser = new XMLToMetadataParser();
-		mMetadata = mXmlToMetadataparser.getDefaultMetadata();
-
+		mMetadata = new Metadata();
 		if (mAvSubscriptionCallback != null)
 			mAvSubscriptionCallback.end();
 		if (mRenSubscriptionCallback != null)
@@ -318,8 +312,7 @@ public class Controller {
 					if (avTransportURIMetaData != null
 							&& avTransportURIMetaData.getValue() != null) {
 						String metadata = avTransportURIMetaData.getValue();
-						mXmlToMetadataparser.parseXmlToMetadata(mMetadata,
-								metadata);
+						XMLFactory.xmlToMetadata(mMetadata, metadata);
 
 					}
 

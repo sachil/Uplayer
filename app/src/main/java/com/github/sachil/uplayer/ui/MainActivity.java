@@ -107,6 +107,8 @@ public class MainActivity extends AppCompatActivity
 		mUpnpService.getRegistry().addDevice(server.getDevice());
 		MediaRenderer renderer = new MediaRenderer(mContext);
 		mUpnpService.getRegistry().addDevice(renderer.getDevice());
+		UpnpUnity.CURRENT_RENDERER = renderer.getDevice();
+		UpnpUnity.CURRENT_SERVER = server.getDevice();
 		ContentGenerator.prepareAudio(mContext, server);
 
 		DeviceRegistryListener listener = new DeviceRegistryListener();
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	public void onServiceDisconnected(ComponentName componentName) {
 		Log.e(TAG, "Service is disconnected.");
+		MusicService.getInstance().stopSelf();
 	}
 
 	@Override

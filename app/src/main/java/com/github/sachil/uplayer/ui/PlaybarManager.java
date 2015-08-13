@@ -1,11 +1,11 @@
 package com.github.sachil.uplayer.ui;
 
-
 import org.fourthline.cling.support.model.TransportState;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,15 +14,13 @@ import android.widget.Toast;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.player.MusicService;
-import com.github.sachil.uplayer.ui.content.PlaylistView;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
 import com.github.sachil.uplayer.ui.message.ErrorMessage;
 import com.github.sachil.uplayer.ui.message.PlayerMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.Controller;
-import com.github.sachil.uplayer.upnp.dmc.MetaDataToXMLGenerator;
-import com.github.sachil.uplayer.upnp.dmc.XMLToMetadataParser;
-import com.github.sachil.uplayer.upnp.dmc.XMLToMetadataParser.Metadata;
+import com.github.sachil.uplayer.upnp.dmc.Metadata;
+import com.github.sachil.uplayer.upnp.dmc.XMLFactory;
 
 import de.greenrobot.event.EventBus;
 
@@ -30,18 +28,20 @@ public class PlaybarManager implements View.OnClickListener {
 
 	private static final String TAG = PlaybarManager.class.getSimpleName();
 	private Context mContext = null;
+	private View mPlaybar = null;
 	private SimpleDraweeView mAlbum = null;
 	private TextView mTitle = null;
 	private TextView mArtist = null;
 	private ImageView mPlayPause = null;
 	private ImageView mPlayList = null;
 	private Controller mController = null;
+	private PlaylistManager mPlaylistManager = null;
 	private TransportState mState = TransportState.NO_MEDIA_PRESENT;
-	private PlaylistView mPlaylistView = null;
 
 	public PlaybarManager(Context context, View contentView) {
 		mContext = context;
 		createView(contentView);
+		mPlaylistManager = PlaylistManager.newInstance(mContext);
 		if (!EventBus.getDefault().isRegistered(this))
 			EventBus.getDefault().register(this);
 	}
@@ -55,6 +55,7 @@ public class PlaybarManager implements View.OnClickListener {
 
 		switch (message.getViewId()) {
 		case -1:
+			Log.e(TAG, "222222222222222222222222");
 			if (mController == null)
 				mController = MusicService.getInstance().getController();
 			playItem();
@@ -73,13 +74,12 @@ public class PlaybarManager implements View.OnClickListener {
 
 		switch (message.getId()) {
 		case PlayerMessage.REFRESH_METADATA:
-			XMLToMetadataParser.Metadata metadata = (XMLToMetadataParser.Metadata) message
-					.getExtra();
+			Metadata metadata = (Metadata) message.getExtra();
 			syncState(PlayerMessage.REFRESH_METADATA, metadata);
 			break;
 
 		case PlayerMessage.REFRESH_VOLUME:
-			metadata = (XMLToMetadataParser.Metadata) message.getExtra();
+			metadata = (Metadata) message.getExtra();
 			syncState(PlayerMessage.REFRESH_VOLUME, metadata);
 			break;
 		}
@@ -104,7 +104,7 @@ public class PlaybarManager implements View.OnClickListener {
 				mController.play();
 			break;
 		case R.id.playbar_playlist:
-			mPlaylistView.show();
+			mPlaylistManager.showPlaylistView(mPlaybar);
 			break;
 		}
 	}
@@ -133,10 +133,9 @@ public class PlaybarManager implements View.OnClickListener {
 				try {
 					Thread.sleep(1000);
 					mController.setUrl(
-							UpnpUnity.PLAYING_ITEM.getItem().getFirstResource()
+							UpnpUnity.PLAYING_ITEM.getFirstResource()
 									.getValue(),
-							MetaDataToXMLGenerator.metadataToXml(
-									UpnpUnity.PLAYING_ITEM.getItem()));
+							XMLFactory.metadataToXml(UpnpUnity.PLAYING_ITEM));
 					Thread.sleep(1000);
 					mController.play();
 				} catch (InterruptedException e) {
@@ -148,9 +147,8 @@ public class PlaybarManager implements View.OnClickListener {
 	}
 
 	private void createView(View contentView) {
-
 		contentView.findViewById(R.id.playbar_layout).setOnClickListener(this);
-		mPlaylistView = new PlaylistView(mContext,contentView.findViewById(R.id.playbar_layout));
+		mPlaybar = contentView.findViewById(R.id.playbar_layout);
 		mAlbum = (SimpleDraweeView) contentView
 				.findViewById(R.id.playbar_album);
 		mTitle = (TextView) contentView.findViewById(R.id.playbar_title);
@@ -158,10 +156,8 @@ public class PlaybarManager implements View.OnClickListener {
 		mPlayPause = (ImageView) contentView
 				.findViewById(R.id.playbar_playpause);
 		mPlayPause.setOnClickListener(this);
-		mPlayList = (ImageView) contentView
-				.findViewById(R.id.playbar_playlist);
+		mPlayList = (ImageView) contentView.findViewById(R.id.playbar_playlist);
 		mPlayList.setOnClickListener(this);
-
 	}
 
 }

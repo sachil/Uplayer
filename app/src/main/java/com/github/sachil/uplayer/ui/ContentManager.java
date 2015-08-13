@@ -6,7 +6,11 @@ import java.util.List;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.meta.LocalDevice;
 import org.fourthline.cling.model.meta.RemoteDevice;
+import org.fourthline.cling.model.meta.Service;
+import org.fourthline.cling.model.types.UDAServiceType;
+import org.fourthline.cling.support.model.DIDLObject;
 import org.fourthline.cling.support.model.container.Container;
+import org.fourthline.cling.support.model.item.Item;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,13 +21,11 @@ import android.view.View;
 
 import com.github.sachil.uplayer.R;
 import com.github.sachil.uplayer.ui.adapter.ContentAdapter;
-import com.github.sachil.uplayer.ui.content.DividerGridItemDecoration;
 import com.github.sachil.uplayer.ui.content.DividerListItemDecoration;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
 import com.github.sachil.uplayer.ui.message.BrowseMessage;
 import com.github.sachil.uplayer.upnp.UpnpUnity;
 import com.github.sachil.uplayer.upnp.dmc.BrowseCallback;
-import com.github.sachil.uplayer.upnp.dmc.ContentItem;
 import com.github.sachil.uplayer.upnp.dms.ContentTree;
 
 import de.greenrobot.event.EventBus;
@@ -34,13 +36,13 @@ public class ContentManager {
 	private Context mContext = null;
 	private RecyclerView mRecyclerView = null;
 	private ContentAdapter mContentAdapter = null;
-	private List<ContentItem> mContentList = null;
+	private List<DIDLObject> mContentList = null;
 	private DividerListItemDecoration mDecoration = null;
 
 	private LAYOUT_TYPE mLayout = LAYOUT_TYPE.LIST;
 
 	public enum LAYOUT_TYPE {
-		LIST, GRID,STAGGERED_GRID
+		LIST, GRID, STAGGERED_GRID
 	}
 
 	public ContentManager(Context context, View contentView) {
@@ -54,7 +56,7 @@ public class ContentManager {
 
 	public boolean isRootNode() {
 
-		return UpnpUnity.CURRENT_CONTAINER.getContainer().getParentID()
+		return UpnpUnity.CURRENT_CONTAINER.getParentID()
 				.equalsIgnoreCase(ContentTree
 						.getRootContentNode(
 								UpnpUnity.CURRENT_SERVER instanceof LocalDevice)
@@ -62,8 +64,7 @@ public class ContentManager {
 	}
 
 	public void viewParent() {
-		String parent = UpnpUnity.CURRENT_CONTAINER.getContainer()
-				.getParentID();
+		String parent = UpnpUnity.CURRENT_CONTAINER.getParentID();
 		if (ContentTree.hasContentNode(parent,
 				UpnpUnity.CURRENT_SERVER instanceof LocalDevice)) {
 			Container container = ContentTree
@@ -71,8 +72,7 @@ public class ContentManager {
 							UpnpUnity.CURRENT_SERVER instanceof LocalDevice)
 					.getContainer();
 			browseContent(UpnpUnity.CURRENT_SERVER, container);
-			UpnpUnity.CURRENT_CONTAINER = new ContentItem(container,
-					UpnpUnity.CURRENT_CONTAINER.getService());
+			UpnpUnity.CURRENT_CONTAINER = container;
 		}
 	}
 
@@ -86,16 +86,16 @@ public class ContentManager {
 		switch (message.getViewId()) {
 		case R.id.nav_media:
 			browseContent(UpnpUnity.CURRENT_SERVER,
-					UpnpUnity.CURRENT_CONTAINER.getContainer());
+					UpnpUnity.CURRENT_CONTAINER);
 			break;
 		case R.id.item_row:
-			ContentItem contentItem = (ContentItem) message.getExtra();
-			if (contentItem.isContainer()) {
-				UpnpUnity.CURRENT_CONTAINER = contentItem;
+			DIDLObject object = (DIDLObject) message.getExtra();
+			if (object instanceof Container) {
+				UpnpUnity.CURRENT_CONTAINER = (Container) object;
 				browseContent(UpnpUnity.CURRENT_SERVER,
-						UpnpUnity.CURRENT_CONTAINER.getContainer());
+						UpnpUnity.CURRENT_CONTAINER);
 			} else {
-				UpnpUnity.PLAYING_ITEM = contentItem;
+				UpnpUnity.PLAYING_ITEM = (Item) object;
 				EventBus.getDefault().post(new ActionMessage(-1, 0, null));
 			}
 			break;
@@ -125,26 +125,26 @@ public class ContentManager {
 
 	private void updateView() {
 
-		if(mContentAdapter != null)
+		if (mContentAdapter != null)
 			mContentAdapter.changeLayoutType(mLayout);
 
 		if (mLayout == LAYOUT_TYPE.LIST) {
 			mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-			if(mDecoration == null)
-				mDecoration = new DividerListItemDecoration(
-						mContext, DividerListItemDecoration.VERTICAL_LIST);
+			if (mDecoration == null)
+				mDecoration = new DividerListItemDecoration(mContext,
+						DividerListItemDecoration.VERTICAL_LIST);
 
 			mRecyclerView.removeItemDecoration(mDecoration);
 			mRecyclerView.addItemDecoration(mDecoration);
 		} else if (mLayout == LAYOUT_TYPE.GRID) {
 			mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
-			if(mDecoration != null)
+			if (mDecoration != null)
 				mRecyclerView.removeItemDecoration(mDecoration);
-		}else{
+		} else {
 			mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,
 					StaggeredGridLayoutManager.VERTICAL));
-			if(mDecoration != null)
+			if (mDecoration != null)
 				mRecyclerView.removeItemDecoration(mDecoration);
 		}
 		if (mContentAdapter == null) {
@@ -155,8 +155,10 @@ public class ContentManager {
 	}
 
 	private void browseContent(Device device, Container container) {
+		Service service = device.findService(
+				new UDAServiceType(UpnpUnity.SERVICE_CONTENT_DIRECTORY));
 		boolean isLoacl = device instanceof RemoteDevice ? false : true;
-		UpnpUnity.UPNP_SERVICE.getControlPoint().execute(new BrowseCallback(
-				UpnpUnity.CURRENT_CONTAINER.getService(), container, isLoacl));
+		UpnpUnity.UPNP_SERVICE.getControlPoint()
+				.execute(new BrowseCallback(service, container, isLoacl));
 	}
 }

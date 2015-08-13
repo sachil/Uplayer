@@ -13,6 +13,7 @@ import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.support.contentdirectory.callback.Browse;
 import org.fourthline.cling.support.model.BrowseFlag;
 import org.fourthline.cling.support.model.DIDLContent;
+import org.fourthline.cling.support.model.DIDLObject;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.item.Item;
@@ -25,7 +26,7 @@ import de.greenrobot.event.EventBus;
 public class BrowseCallback extends Browse {
 	private static final String TAG = BrowseCallback.class.getSimpleName();
 
-	private List<ContentItem> mContentList = null;
+	private List<DIDLObject> mContentList = null;
 	private Service mService = null;
 	private boolean mIsLocal = false;
 	private boolean mIsRootNode = false;
@@ -46,7 +47,7 @@ public class BrowseCallback extends Browse {
 			final DIDLContent didl) {
 		mContentList.clear();
 		for (Container container : didl.getContainers()) {
-			mContentList.add(new ContentItem(container, mService));
+			mContentList.add(container);
 			if (!mIsLocal) {
 				UpnpUnity.generateContainer(container.getId(),
 						container.getTitle(), container.getParentID(),
@@ -54,7 +55,7 @@ public class BrowseCallback extends Browse {
 			}
 		}
 		for (Item item : didl.getItems())
-			mContentList.add(new ContentItem(item, mService));
+			mContentList.add(item);
 		sortList();
 		EventBus.getDefault()
 				.post(new BrowseMessage(mContentList, mIsRootNode));
@@ -71,17 +72,16 @@ public class BrowseCallback extends Browse {
 
 	private void sortList() {
 
-		Comparator<ContentItem> comparator = new Comparator<ContentItem>() {
+		Comparator<DIDLObject> comparator = new Comparator<DIDLObject>() {
 			@Override
-			public int compare(ContentItem item1, ContentItem item2) {
+			public int compare(DIDLObject obj1, DIDLObject obj2) {
 
-				if (item1.isContainer() && item2.isContainer())
-					return item1.getContainer().getTitle().compareToIgnoreCase(
-							item2.getContainer().getTitle());
-				else if (!item1.isContainer() && !item2.isContainer())
-					return item1.getItem().getTitle()
-							.compareToIgnoreCase(item2.getItem().getTitle());
-				else if (item1.isContainer())
+				if ((obj1 instanceof Container) && (obj2 instanceof Container))
+					return obj1.getTitle().compareToIgnoreCase(obj2.getTitle());
+				else if (!(obj1 instanceof Container)
+						&& !(obj2 instanceof Container))
+					return obj1.getTitle().compareToIgnoreCase(obj2.getTitle());
+				else if (obj1 instanceof Container)
 					return -1;
 				else
 					return 1;
