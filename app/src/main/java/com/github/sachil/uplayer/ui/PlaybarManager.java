@@ -42,20 +42,15 @@ public class PlaybarManager implements View.OnClickListener {
 		mContext = context;
 		createView(contentView);
 		mPlaylistManager = PlaylistManager.newInstance(mContext);
+		mPlaylistManager.queryList();
 		if (!EventBus.getDefault().isRegistered(this))
 			EventBus.getDefault().register(this);
-	}
-
-	public void clean() {
-		if (EventBus.getDefault().isRegistered(this))
-			EventBus.getDefault().unregister(this);
 	}
 
 	public void onEvent(ActionMessage message) {
 
 		switch (message.getViewId()) {
 		case -1:
-			Log.e(TAG, "222222222222222222222222");
 			if (mController == null)
 				mController = MusicService.getInstance().getController();
 			playItem();
@@ -83,6 +78,13 @@ public class PlaybarManager implements View.OnClickListener {
 			syncState(PlayerMessage.REFRESH_VOLUME, metadata);
 			break;
 		}
+	}
+
+	public void clean() {
+		if (mPlaylistManager != null)
+			mPlaylistManager.clean();
+		if (EventBus.getDefault().isRegistered(this))
+			EventBus.getDefault().unregister(this);
 	}
 
 	@Override

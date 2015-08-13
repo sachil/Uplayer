@@ -7,15 +7,15 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="72dp">
 
         <ImageView
             android:id="@+id/playlist_model"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:background="?attr/selectableItemBackground"
-            android:layout_centerVertical="true"
             android:src="@drawable/playback_repeat_grey"
             />
 
@@ -24,8 +24,8 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
             android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
             android:background="?attr/selectableItemBackground"
             android:src="@drawable/action_clear"/>
 
@@ -39,8 +39,8 @@
             android:layout_toRightOf="@id/playlist_model"
             android:gravity="center"
             android:singleLine="true"
-            android:textSize="20sp"
-            android:text="kfjdlfjlsdkjflkdjf"/>
+            android:text="@string/title_playlist"
+            android:textSize="20sp"/>
 
         <View
             android:layout_width="match_parent"

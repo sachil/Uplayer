@@ -10,6 +10,7 @@
     <string name="title_library">服务器</string>
     <string name="title_renderer">渲染器</string>
     <string name="title_media">媒体内容</string>
+    <string name="title_playlist">播放列表</string>
     <string name="action_settings">设置</string>
     <string name="action_exit">退出</string>
     <string name="action_play">播放</string>
