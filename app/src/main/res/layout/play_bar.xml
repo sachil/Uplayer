@@ -26,8 +26,8 @@
 
     <ImageView
         android:id="@+id/playbar_playlist"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
@@ -38,8 +38,8 @@
 
     <ImageView
         android:id="@+id/playbar_playpause"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
         android:layout_toLeftOf="@id/playbar_playlist"

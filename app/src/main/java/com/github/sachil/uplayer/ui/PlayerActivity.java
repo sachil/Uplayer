@@ -71,6 +71,7 @@ public class PlayerActivity extends AppCompatActivity
 	private TimerTask mPositionTask = null;
 	private Controller mController = null;
 	private TransportState mState = TransportState.NO_MEDIA_PRESENT;
+	private PlaylistManager mManager = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class PlayerActivity extends AppCompatActivity
 		initView();
 		mController = MusicService.getInstance().getController();
 		mController.registerLastChange();
-
+		mManager = PlaylistManager.newInstance(mContext);
 	}
 
 	@Override
@@ -149,7 +150,7 @@ public class PlayerActivity extends AppCompatActivity
 
 			break;
 		case R.id.player_playlist:
-
+			mManager.showPlaylistView(findViewById(R.id.player_control_layout));
 			break;
 		}
 	}

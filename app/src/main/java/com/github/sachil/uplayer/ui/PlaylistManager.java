@@ -8,7 +8,9 @@ import com.github.sachil.uplayer.database.DatabaseManager;
 import com.github.sachil.uplayer.ui.adapter.PlaylistAdapter;
 import com.github.sachil.uplayer.ui.content.PlaylistView;
 import com.github.sachil.uplayer.ui.message.ActionMessage;
+import com.github.sachil.uplayer.upnp.UpnpUnity;
 
+import org.fourthline.cling.support.model.DIDLObject;
 import org.fourthline.cling.support.model.item.Item;
 
 import de.greenrobot.event.EventBus;
@@ -29,6 +31,7 @@ public class PlaylistManager {
 		mPlaylistView = new PlaylistView(mContext);
 		mPlaylistView.setAdapter(mAdapter);
 		mDatabaseManager = DatabaseManager.newInstance(mContext);
+		queryList();
 		if (!EventBus.getDefault().isRegistered(this))
 			EventBus.getDefault().register(this);
 	}
@@ -43,15 +46,23 @@ public class PlaylistManager {
 
 		switch (message.getViewId()) {
 		case R.id.menu_add_playlist:
-			mDatabaseManager.addItem(mTableName, (Item) message.getExtra());
+			if (mDatabaseManager.addItem(mTableName, (Item) message.getExtra()))
+				mAdapter.add((Item) message.getExtra());
 			break;
 		case R.id.playlist_delete:
+			mDatabaseManager.deleteItem(mTableName, (Item) message.getExtra());
+			mAdapter.remove((Item) message.getExtra());
 			break;
 		case R.id.playlist_row:
+			DIDLObject object = (DIDLObject) message.getExtra();
+			UpnpUnity.PLAYING_ITEM = (Item) object;
+			EventBus.getDefault().post(new ActionMessage(-1, 0, null));
 			break;
 		case R.id.playlist_model:
 			break;
 		case R.id.playlist_clear:
+			mDatabaseManager.deleteItems(mTableName, mAdapter.getItems());
+			mAdapter.clear();
 			break;
 		}
 	}

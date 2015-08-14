@@ -15,6 +15,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.MediaStore;
+import android.util.Log;
 
 public class DatabaseManager {
 	private static final String TAG = DatabaseManager.class.getSimpleName();
@@ -34,10 +35,11 @@ public class DatabaseManager {
 		return MANAGER;
 	}
 
-	public void addItem(String tableName, Item item) {
-
+	public boolean addItem(String tableName, Item item) {
 		if (mDatabase == null)
 			createTable(tableName);
+		if (isItemExist(tableName, item))
+			return false;
 
 		ContentValues values = new ContentValues();
 		values.put(MediaStore.MediaColumns._ID, item.getId());
@@ -63,8 +65,15 @@ public class DatabaseManager {
 							.toString());
 			values.put(MediaStore.Audio.AudioColumns.DURATION,
 					musicItem.getFirstResource().getDuration());
+
+			values.put(MediaStore.MediaColumns.DATA, musicItem.getDate());
+
 		}
-		mDatabase.insert(tableName, null, values);
+		if (mDatabase.insert(tableName, null, values) != -1)
+			return true;
+		else
+			return false;
+
 	}
 
 	public void addItems(String tableName, List<Item> items) {
@@ -76,8 +85,9 @@ public class DatabaseManager {
 		if (mDatabase == null)
 			createTable(tableName);
 
-		String whereCase = MediaStore.MediaColumns.TITLE + "=?";
-		String[] whereArgs = new String[] { item.getTitle() };
+		String whereCase = DatabaseHelper.ITEM_URI + "=?";
+		String[] whereArgs = new String[] {
+				item.getFirstResource().getValue() };
 		mDatabase.delete(tableName, whereCase, whereArgs);
 	}
 
@@ -113,6 +123,7 @@ public class DatabaseManager {
 							.toString());
 			values.put(MediaStore.Audio.AudioColumns.DURATION,
 					musicItem.getFirstResource().getDuration());
+			values.put(MediaStore.MediaColumns.DATA, musicItem.getDate());
 		}
 		mDatabase.update(tableName, values, whereCase, whereArgs);
 	}
@@ -124,43 +135,51 @@ public class DatabaseManager {
 		List<Item> items = new ArrayList<>();
 		Cursor cursor = mDatabase.query(tableName, null, null, null, null, null,
 				null, null);
-		cursor.moveToFirst();
-		while (cursor.moveToNext()) {
-			String id = cursor.getString(
-					cursor.getColumnIndex(MediaStore.MediaColumns._ID));
-			String parentId = cursor.getString(
-					cursor.getColumnIndex(DatabaseHelper.ITEM_PARENT_ID));
-			String title = cursor.getString(
-					cursor.getColumnIndex(MediaStore.MediaColumns.TITLE));
-			String uri = cursor
-					.getString(cursor.getColumnIndex(DatabaseHelper.ITEM_URI));
-			Long size = cursor.getLong(
-					cursor.getColumnIndex(MediaStore.MediaColumns.SIZE));
 
-			String mimeType = cursor.getString(
-					cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
+		if (cursor.getCount() > 0) {
+			if (cursor.moveToFirst()) {
+				do {
+					String id = cursor.getString(
+							cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+					String parentId = cursor.getString(cursor
+							.getColumnIndex(DatabaseHelper.ITEM_PARENT_ID));
+					String title = cursor.getString(cursor
+							.getColumnIndex(MediaStore.MediaColumns.TITLE));
+					String uri = cursor.getString(
+							cursor.getColumnIndex(DatabaseHelper.ITEM_URI));
+					Long size = cursor.getLong(cursor
+							.getColumnIndex(MediaStore.MediaColumns.SIZE));
 
-			String artist = cursor.getString(cursor
-					.getColumnIndex(MediaStore.Audio.AudioColumns.ARTIST));
-			String album = cursor.getString(
-					cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM));
-			String thumb = cursor.getString(
-					cursor.getColumnIndex(DatabaseHelper.AUDIO_THUMB));
-			String duration = cursor.getString(cursor
-					.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION));
-			Res res = new Res(
-					new MimeType(mimeType.substring(0, mimeType.indexOf('/')),
+					String mimeType = cursor.getString(cursor
+							.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
+
+					String artist = cursor.getString(cursor.getColumnIndex(
+							MediaStore.Audio.AudioColumns.ARTIST));
+					String album = cursor.getString(cursor.getColumnIndex(
+							MediaStore.Audio.AudioColumns.ALBUM));
+					String thumb = cursor.getString(
+							cursor.getColumnIndex(DatabaseHelper.AUDIO_THUMB));
+					String duration = cursor.getString(cursor.getColumnIndex(
+							MediaStore.Audio.AudioColumns.DURATION));
+					String date = cursor.getString(cursor
+							.getColumnIndex(MediaStore.MediaColumns.DATA));
+					Res res = new Res(
+							new MimeType(mimeType.substring(0,
+									mimeType.indexOf('/')),
 							mimeType.substring(mimeType.indexOf('/') + 1)),
-					size, uri);
-			res.setDuration(duration);
-			MusicTrack musicTrack = new MusicTrack(id, parentId, title, artist,
-					album, artist, res);
-			if (thumb != null)
-				musicTrack
-						.addProperty(new DIDLObject.Property.UPNP.ALBUM_ART_URI(
-								URI.create(thumb)));
+							size, uri);
+					res.setDuration(duration);
+					MusicTrack musicTrack = new MusicTrack(id, parentId, title,
+							artist, album, artist, res);
+					musicTrack.setDate(date);
+					if (thumb != null)
+						musicTrack.addProperty(
+								new DIDLObject.Property.UPNP.ALBUM_ART_URI(
+										URI.create(thumb)));
+					items.add(musicTrack);
+				} while (cursor.moveToNext());
 
-			items.add(musicTrack);
+			}
 		}
 		return items;
 	}
@@ -168,6 +187,18 @@ public class DatabaseManager {
 	private void createTable(String tableName) {
 		mHelper.setTableName(tableName);
 		mDatabase = mHelper.getWritableDatabase();
+	}
+
+	private boolean isItemExist(String tableName, Item item) {
+		boolean isExist = false;
+		Cursor cursor = mDatabase.query(tableName,
+				new String[] { DatabaseHelper.ITEM_URI },
+				DatabaseHelper.ITEM_URI + "=?",
+				new String[] { item.getFirstResource().getValue() }, null, null,
+				null);
+		if (cursor.getCount() != 0)
+			isExist = true;
+		return isExist;
 	}
 
 }

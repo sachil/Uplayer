@@ -3,6 +3,7 @@ package com.github.sachil.uplayer.ui.content;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -54,6 +55,7 @@ public class PlaylistView extends PopupWindow implements View.OnClickListener {
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 		mRecyclerView.addItemDecoration(new DividerListItemDecoration(mContext,
 				DividerListItemDecoration.VERTICAL_LIST));
+		mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
 		contentView.findViewById(R.id.playlist_model).setOnClickListener(this);
 		contentView.findViewById(R.id.playlist_clear).setOnClickListener(this);

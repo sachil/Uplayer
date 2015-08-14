@@ -45,6 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ ITEM_URI + " TEXT, "
 				+ MediaStore.Audio.AudioColumns.DURATION + " TEXT,"
 				+ MediaStore.MediaColumns.MIME_TYPE + " TEXT,"
+				+ MediaStore.MediaColumns.DATA + " TEXT, "
 				+ MediaStore.MediaColumns.SIZE + " INTEGER);";
 
 		db.execSQL(request);

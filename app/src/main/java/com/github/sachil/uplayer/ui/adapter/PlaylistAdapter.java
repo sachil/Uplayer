@@ -10,6 +10,7 @@ import org.fourthline.cling.support.model.item.MusicTrack;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +35,30 @@ public class PlaylistAdapter
 		mListItems = new ArrayList<>();
 	}
 
+	public List<Item> getItems() {
+
+		return mListItems;
+	}
+
 	public void refresh(List<Item> items) {
 		mListItems = items;
+		notifyDataSetChanged();
+	}
+
+	public void add(Item item) {
+		int position = mListItems.size();
+		mListItems.add(position, item);
+		notifyDataSetChanged();
+	}
+
+	public void remove(Item item) {
+		int position = mListItems.indexOf(item);
+		mListItems.remove(position);
+		notifyDataSetChanged();
+	}
+
+	public void clear() {
+		mListItems.clear();
 		notifyDataSetChanged();
 	}
 
@@ -47,7 +70,6 @@ public class PlaylistAdapter
 	@Override
 	public PlaylistAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
 			int viewType) {
-
 		View contentView = LayoutInflater.from(mContext)
 				.inflate(R.layout.item_playlist, parent, false);
 		return new ViewHolder(contentView);
@@ -56,7 +78,6 @@ public class PlaylistAdapter
 	@Override
 	public void onBindViewHolder(PlaylistAdapter.ViewHolder holder,
 			final int position) {
-
 		Item item = mListItems.get(position);
 		holder.mTitle.setText(item.getTitle());
 		holder.mArtist.setText(item.getCreator());
@@ -77,6 +98,7 @@ public class PlaylistAdapter
 			public void onClick(View view) {
 				switch (view.getId()) {
 				case R.id.playlist_delete:
+
 					EventBus.getDefault().post(new ActionMessage(
 							R.id.playlist_delete, 0, mListItems.get(position)));
 					break;
@@ -109,5 +131,4 @@ public class PlaylistAdapter
 			mDeleteMenu = (ImageView) view.findViewById(R.id.playlist_delete);
 		}
 	}
-
 }

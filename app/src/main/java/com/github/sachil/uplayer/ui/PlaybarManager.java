@@ -42,7 +42,6 @@ public class PlaybarManager implements View.OnClickListener {
 		mContext = context;
 		createView(contentView);
 		mPlaylistManager = PlaylistManager.newInstance(mContext);
-		mPlaylistManager.queryList();
 		if (!EventBus.getDefault().isRegistered(this))
 			EventBus.getDefault().register(this);
 	}
